@@ -20,4 +20,4 @@ COPY . .
 
 RUN python manage.py collectstatic --noinput
 
-CMD sh -c "python manage.py migrate && gunicorn core.wsgi --bind 0.0.0.0:$PORT"
+CMD sh -c "env | grep DATABASE_URL && python manage.py migrate && gunicorn core.wsgi --bind 0.0.0.0:$PORT"
