@@ -29,4 +29,4 @@ COPY . .
 RUN python manage.py collectstatic --noinput
 
 # Run app
-CMD ["gunicorn", "core.wsgi", "--bind", "0.0.0.0:$PORT"]
+CMD gunicorn core.wsgi --bind 0.0.0.0:$PORT
