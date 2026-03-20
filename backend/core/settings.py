@@ -139,12 +139,14 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
+print("DATABASE_URL:", os.getenv("DATABASE_URL"))
 DATABASES = {
     "default": dj_database_url.parse(
         os.environ["DATABASE_URL"],  # ← force it
         conn_max_age=600
     )
 }
+
 
 DATABASES["default"]["ENGINE"] = "django.contrib.gis.db.backends.postgis"
 

@@ -25,14 +25,10 @@ RUN pip install -r requirements.txt
 # Copy project
 COPY . .
 
-RUN python manage.py migrate && \
-    python manage.py createsuperuser \
-    --noinput \
-    --username admin \
-    --email williamcernestojr@yahoo.com || true
+# ❌ REMOVE migrate + createsuperuser from here
 
-# Collect static
+# Collect static (this is fine)
 RUN python manage.py collectstatic --noinput
 
-# Run app
-CMD gunicorn core.wsgi --bind 0.0.0.0:$PORT
+# ✅ Run everything at runtime instead
+CMD sh -c "python manage.py migrate && gunicorn core.wsgi --bind 0.0.0.0:$PORT"
