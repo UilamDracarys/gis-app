@@ -139,27 +139,39 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-DATABASE_URL = os.getenv("DATABASE_URL")
+DATABASES = {
+    "default": dj_database_url.parse(
+        os.environ["DATABASE_URL"],  # ← force it
+        conn_max_age=600
+    )
+}
 
-if DATABASE_URL:
-    DATABASES = {
-        "default": dj_database_url.parse(DATABASE_URL, conn_max_age=600)
-    }
+DATABASES["default"]["ENGINE"] = "django.contrib.gis.db.backends.postgis"
 
-    # 🔥 REQUIRED for GeoDjango
-    DATABASES["default"]["ENGINE"] = "django.contrib.gis.db.backends.postgis"
 
-else:
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.contrib.gis.db.backends.postgis",
-            "NAME": os.getenv("DB_NAME"),
-            "USER": os.getenv("DB_USER"),
-            "PASSWORD": os.getenv("DB_PASSWORD"),
-            "HOST": os.getenv("DB_HOST", "localhost"),
-            "PORT": os.getenv("DB_PORT", "5432"),
-        }
-    }
+
+
+# DATABASE_URL = os.getenv("DATABASE_URL")
+
+# if DATABASE_URL:
+#     DATABASES = {
+#         "default": dj_database_url.parse(DATABASE_URL, conn_max_age=600)
+#     }
+
+#     # 🔥 REQUIRED for GeoDjango
+#     DATABASES["default"]["ENGINE"] = "django.contrib.gis.db.backends.postgis"
+
+# else:
+#     DATABASES = {
+#         "default": {
+#             "ENGINE": "django.contrib.gis.db.backends.postgis",
+#             "NAME": os.getenv("DB_NAME"),
+#             "USER": os.getenv("DB_USER"),
+#             "PASSWORD": os.getenv("DB_PASSWORD"),
+#             "HOST": os.getenv("DB_HOST", "localhost"),
+#             "PORT": os.getenv("DB_PORT", "5432"),
+#         }
+#     }
 
 
 # Password validation
