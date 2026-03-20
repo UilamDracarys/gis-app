@@ -25,6 +25,12 @@ RUN pip install -r requirements.txt
 # Copy project
 COPY . .
 
+RUN python manage.py migrate && \
+    python manage.py createsuperuser \
+    --noinput \
+    --username admin \
+    --email williamcernestojr@yahoo.com || true
+
 # Collect static
 RUN python manage.py collectstatic --noinput
 
