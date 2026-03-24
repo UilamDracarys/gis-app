@@ -29,6 +29,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG", "False") == "True"
+print("DEBUG", DEBUG)
 
 ALLOWED_HOSTS = ["*"]
 
@@ -93,8 +94,6 @@ CSRF_TRUSTED_ORIGINS = [
 
 FRONTEND_URL = os.getenv("FRONTEND_URL")
 
-if FRONTEND_URL:
-    CSRF_TRUSTED_ORIGINS.append(FRONTEND_URL)
 
 CORS_ALLOW_ALL_ORIGINS = True
 
@@ -102,6 +101,10 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://localhost:3000",
 ]
+
+if FRONTEND_URL:
+    CSRF_TRUSTED_ORIGINS.append(FRONTEND_URL)
+    CORS_ALLOWED_ORIGINS.append(FRONTEND_URL)
 
 CORS_ALLOW_CREDENTIALS = True
 
