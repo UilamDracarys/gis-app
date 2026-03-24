@@ -93,18 +93,21 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 FRONTEND_URL = os.getenv("FRONTEND_URL")
-
+BACKEND_URL = os.getenv("BACKEND_URL")
 
 CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://localhost:3000",
+    "https://gis-app-production-69a3.up.railway.app/"
 ]
 
 if FRONTEND_URL:
     CSRF_TRUSTED_ORIGINS.append(FRONTEND_URL)
+    CSRF_TRUSTED_ORIGINS.append(BACKEND_URL)
     CORS_ALLOWED_ORIGINS.append(FRONTEND_URL)
+    CORS_ALLOWED_ORIGINS.append(BACKEND_URL)
 
 CORS_ALLOW_CREDENTIALS = True
 
