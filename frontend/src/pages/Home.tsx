@@ -16,6 +16,7 @@ const Home = () => {
 			const data = await featuresApi.fetchAll();
 
 			if (data) {
+				console.log("Data fetched! Loading...")
 				L.geoJSON(data as any, {
 					style: (feature: any) => {
 						return feature.properties?.style || {};
