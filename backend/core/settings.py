@@ -89,7 +89,6 @@ CSRF_COOKIE_HTTPONLY = False  # must be False for frontend access
 FRONTEND_URL = os.getenv("FRONTEND_URL")
 BACKEND_URL = os.getenv("BACKEND_URL")
 
-
 CORS_ALLOWED_ORIGINS = [
     origin for origin in os.getenv("CORS_ALLOWED_ORIGINS", "").split(",") if origin
 ]
@@ -100,12 +99,20 @@ CSRF_TRUSTED_ORIGINS = [
 
 CORS_ALLOW_ALL_ORIGINS = str_to_bool(os.getenv("CORS_ALLOW_ALL_ORIGINS", "False"))
 
+print(CORS_ALLOW_ALL_ORIGINS, type(CORS_ALLOW_ALL_ORIGINS))
+
 SESSION_COOKIE_SECURE = str_to_bool(os.getenv("SESSION_COOKIE_SECURE", "True"))
 CSRF_COOKIE_SECURE = str_to_bool(os.getenv("CSRF_COOKIE_SECURE", "True"))
 
 SESSION_COOKIE_SAMESITE = os.getenv("SESSION_COOKIE_SAMESITE", "Lax")
 CSRF_COOKIE_SAMESITE = os.getenv("CSRF_COOKIE_SAMESITE", "Lax")
 
+CORS_ALLOW_CREDENTIALS = str_to_bool(os.getenv("CORS_ALLOW_CREDENTIALS", "True"))
+
+print(SESSION_COOKIE_SECURE, type(SESSION_COOKIE_SECURE))
+print(CSRF_COOKIE_SECURE, type(CSRF_COOKIE_SECURE))
+print(SESSION_COOKIE_SAMESITE, type(SESSION_COOKIE_SAMESITE))
+print(CSRF_COOKIE_SAMESITE, type(CSRF_COOKIE_SAMESITE))
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
