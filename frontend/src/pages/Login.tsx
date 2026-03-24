@@ -5,6 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import auth from "@/services/api/auth";
 import { Label } from "@/components/ui/label";
 import { Field, FieldGroup } from "@/components/ui/field";
+import { Link } from "react-router-dom";
 
 const Login = () => {
 	const [username, setUsername] = useState("");
@@ -25,20 +26,20 @@ const Login = () => {
 			return;
 		}
 
-		// 🔑 IMPORTANT: fetch user after login
 		const user = await auth.getUser();
 
 		if (user) {
 			setUser(user);
-			navigate("/"); // or dashboard
+			navigate("/");
 		}
 	};
 
 	return (
 		<>
+		<title>Login | SimpleGIS</title>
 			<div className="bg-blue-50 h-screen w-full flex justify-center items-center">
 				<div
-					className="login w-[40vw] max-w-120 bg-blue-100 rounded-lg shadow-md shadow-gray-500
+					className="login w-[90vw] md:w-[40vw] max-w-120 bg-blue-100 rounded-lg shadow-md shadow-gray-500
         p-5
         flex flex-col gap-2
         "
@@ -61,9 +62,9 @@ const Login = () => {
 									}
 									required
 								></Input>
-								<Label htmlFor="password">Password</Label>
 							</Field>
 							<Field>
+								<Label htmlFor="password">Password</Label>
 								<Input
 									id="password"
 									type="password"
@@ -85,7 +86,21 @@ const Login = () => {
 						<button className="bg-blue-950 w-full rounded-md text-white font-bold h-10 cursor-pointer hover:bg-blue-400 transition-all duration-300 ease">
 							Login
 						</button>
+
+						<div className="flex items-center my-4">
+							<div className="grow border-t border-gray-300" />
+							<span className="mx-3 text-gray-500 text-sm">
+								OR
+							</span>
+							<div className="grow border-t border-gray-300" />
+						</div>
 					</form>
+					<Link
+						to="/register"
+						className="flex justify-center items-center bg-blue-950/20 border-blue-950 border w-full rounded-md text-blue-950 font-bold h-10 cursor-pointer hover:bg-blue-400 transition-all duration-300 ease"
+					>
+						Register
+					</Link>
 				</div>
 			</div>
 		</>

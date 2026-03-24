@@ -7,9 +7,14 @@ from .serializers import FeatureSerializer
 import json
 
 class FeatureViewSet(viewsets.ModelViewSet):
-    queryset = Feature.objects.all()
     serializer_class = FeatureSerializer
     permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        if (self.request.user.is_superuser):
+            return Feature.objects.all()
+        else:
+            return Feature.objects.filter(created_by=self.request.user)
 
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user)

@@ -8,6 +8,7 @@ const client = axios.create({
 });
 
 let isRefreshing = false;
+const PUBLIC_ROUTES = ["/login", "/register"];
 
 client.interceptors.response.use(
 	(res) => res,
@@ -29,7 +30,8 @@ client.interceptors.response.use(
 				} catch {
 					isRefreshing = false;
 					console.log("LOGIN");
-					if (window.location.pathname !== "/login") {
+					const currentPath = window.location.pathname;
+					if (!PUBLIC_ROUTES.includes(currentPath)) {
 						window.location.href = "/login";
 					}
 				}

@@ -136,7 +136,7 @@ const Map = () => {
 			>
 				{loading && (
 					<div className="absolute inset-0 z-9999 flex items-center justify-center bg-black/40">
-						<span className="text-white text-lg">Loading...</span>
+						<span className="text-white text-lg">Loading features...</span>
 					</div>
 				)}
 				<FeatureLoader
