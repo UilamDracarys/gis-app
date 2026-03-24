@@ -28,13 +28,16 @@ client.interceptors.response.use(
 					return client(original);
 				} catch {
 					isRefreshing = false;
-					window.location.href = "/auth/login";
+					console.log("LOGIN");
+					if (window.location.pathname !== "/login") {
+						window.location.href = "/login";
+					}
 				}
 			}
 		}
 
 		return Promise.reject(error);
-	}
+	},
 );
 
 export default client;

@@ -63,6 +63,54 @@ body {
   cursor: pointer;
 }
 
+.popup-content-table {
+  border: 2px solid black;
+  border-collapse: collapse;
+}
+
+.popup-content-table th,
+.popup-content-table td {
+  padding: 0.5rem;
+  border: 1px solid gray;
+}
+
+.feature-popup-content .controls {
+  margin-top: 0.5rem;
+  display: flex;
+  justify-content: center;
+  gap: 0.3rem;
+}
+
+.feature-popup-content .controls button {
+  flex: 1;
+  padding: 0.5rem;
+  border-radius: 10px;
+  font-weight: bold;
+  color: whitesmoke;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.feature-popup-content .controls button:hover {
+  background-color: whitesmoke;
+  border: 1px solid black;
+  color: black;
+}
+
+.controls .edit {
+  background-color: orange;
+}
+
+.controls .delete {
+  background-color: red;
+}
+
+.feature-popup-content .controls button:active {
+  background-color: whitesmoke;
+  border: 2px solid black;
+}
+
+
 .blink-marker {
   width: 25px;
   height: 25px;

@@ -21,6 +21,29 @@ const featuresApi = {
 			console.error(error.message);
 		}
 	},
+	async deleteFeature(id: any) {
+		try {
+			const res = await client.delete(`/features/${id}/`);
+			console.log("RESPONSE", res);
+			if (res.status !== 204) {
+				return { error: res.statusText }
+			}
+			return {success: true};
+		} catch (error: any) {
+			console.error(error.message);
+		}
+	},
+	async updateGeometry(id: any, geometry: any) {
+		try {
+			const res = await client.patch(`/features/${id}/`, {geom: geometry});
+			if (res.status !== 200) {
+				return { error: res.statusText }
+			}
+			return {success: true};
+		} catch (error: any) {
+			console.error(error.message)
+		}
+	}
 };
 
 export default featuresApi;

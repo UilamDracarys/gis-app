@@ -4,10 +4,7 @@ import {
 	MapPin,
 	Locate,
 	Loader,
-	BrushCleaning,
 	FileText,
-	Ban,
-	Trash,
 } from "lucide-react";
 import { useMap } from "react-leaflet";
 import L from "leaflet";
@@ -18,9 +15,7 @@ import { toast } from "react-toastify";
 const ActionBar = ({ refs, openDialog }: any) => {
 	const { savedItemsRef, drawnItemsRef, djangoItemsRef } = refs;
 	const map = useMap();
-	const [clearDisabled, setClearDisabled] = useState(true);
 	const [locateDisabled, setLocateDisabled] = useState(false);
-	const [isDrawing, setIsDrawing] = useState(false);
 
 	const [isCurrentLoading, setIsCurrentLoading] = useState(false);
 
@@ -84,9 +79,7 @@ const ActionBar = ({ refs, openDialog }: any) => {
 			layer.feature.properties.style =
 				featureStyles[event.layerType as keyof typeof featureStyles];
 
-
 			drawnItemsRef.current?.addLayer(layer);
-			setClearDisabled(false);
 			setActiveTool("");
 		};
 
@@ -97,7 +90,6 @@ const ActionBar = ({ refs, openDialog }: any) => {
 		};
 
 		const handleDeleted = (_event: any) => {
-			
 			const geojson = savedItemsRef.current?.toGeoJSON();
 			localStorage.setItem("features", JSON.stringify(geojson));
 		};
@@ -114,7 +106,6 @@ const ActionBar = ({ refs, openDialog }: any) => {
 				if (layerName) lyrs.push(layerName);
 			}
 		});
-
 
 		return () => {
 			map.off(L.Draw.Event.CREATED, handleDrawn);
@@ -180,7 +171,6 @@ const ActionBar = ({ refs, openDialog }: any) => {
 
 		if (featureType === activeTool) {
 			setActiveTool("");
-			setIsDrawing(false);
 			drawerRef.current?.disable();
 			return;
 		} else {
@@ -199,24 +189,7 @@ const ActionBar = ({ refs, openDialog }: any) => {
 			drawer = new L.Draw.CircleMarker(map as any);
 		}
 		drawer.enable();
-		setIsDrawing(true);
 		drawerRef.current = drawer;
-	};
-
-	const clearDrawnItems = () => {
-
-		drawnItemsRef.current?.clearLayers();
-		setActiveTool("");
-		setIsDrawing(false);
-		setClearDisabled(true);
-	};
-
-	const handleDelete = () => {
-		const deleteHandler = new L.EditToolbar.Delete(map as any, {
-			featureGroup: savedItemsRef.current,
-		});
-
-		deleteHandler.enable();
 	};
 
 	const exportFeatureGroup = () => {
@@ -250,7 +223,11 @@ const ActionBar = ({ refs, openDialog }: any) => {
 			ref={actionBarRef}
 			className="controls bg-white/60 z-9000 w-full h-15 absolute bottom-0 flex justify-center items-center "
 		>
+			
 			<div className="bottom-right-buttons absolute bottom-[110%] right-1.25 z-9000 flex flex-col gap-1">
+				
+				
+				
 				<button
 					onClick={handleLocate}
 					disabled={locateDisabled}
@@ -263,32 +240,6 @@ const ActionBar = ({ refs, openDialog }: any) => {
 					)}
 				</button>
 
-				<button
-					className="bg-white/90 p-3 rounded-full cursor-pointer group disabled:opacity-60 disabled:cursor-not-allowed"
-					disabled={!isDrawing}
-					onClick={() => {
-						setIsDrawing(false);
-						setActiveTool("");
-						drawerRef.current?.disable();
-					}}
-				>
-					<Ban className="transition-transform duration-300 -disabled:group-hover:scale-130 -disabled:active:text-red-700 " />
-				</button>
-
-				<button
-					className="bg-white/90 p-3 rounded-full cursor-pointer group disabled:opacity-60 disabled:cursor-not-allowed"
-					disabled={clearDisabled}
-					onClick={clearDrawnItems}
-				>
-					<BrushCleaning className="transition-transform duration-300 -disabled:group-hover:scale-130 -disabled:active:text-red-700 " />
-				</button>
-
-				<button
-					className="bg-white/90 p-3 rounded-full cursor-pointer group disabled:opacity-60 disabled:cursor-not-allowed"
-					onClick={handleDelete}
-				>
-					<Trash className="transition-transform duration-300 -disabled:group-hover:scale-130 -disabled:active:text-red-700 " />
-				</button>
 
 				<button
 					className="bg-white/90 p-3 rounded-full cursor-pointer group disabled:opacity-60 disabled:cursor-not-allowed"

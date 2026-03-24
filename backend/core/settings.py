@@ -49,6 +49,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -56,7 +57,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
 ]
 
 REST_FRAMEWORK = {
@@ -82,8 +82,8 @@ CSRF_COOKIE_HTTPONLY = False  # must be False for frontend access
 SESSION_COOKIE_SAMESITE = 'Lax'
 CSRF_COOKIE_SAMESITE = 'Lax'
 
-SESSION_COOKIE_SECURE = True  # True in production
-CSRF_COOKIE_SECURE = True     # True in production
+SESSION_COOKIE_SECURE = False  # True in production
+CSRF_COOKIE_SECURE = False     # True in production
 
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5173",  
@@ -97,10 +97,10 @@ if FRONTEND_URL:
 
 CORS_ALLOW_ALL_ORIGINS = True
 
-# CORS_ALLOWED_ORIGINS = [
-#     "http://localhost:5173",
-#     "http://localhost:3000",
-# ]
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://localhost:3000",
+]
 
 CORS_ALLOW_CREDENTIALS = True
 
@@ -141,8 +141,6 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 DATABASE_URL = os.getenv("DATABASE_URL")
 
-print("🔥 DATABASE_URL:", DATABASE_URL)
-
 DATABASES = {
     "default": dj_database_url.config(
         default=DATABASE_URL,
@@ -152,28 +150,28 @@ DATABASES = {
 
 DATABASES["default"]["ENGINE"] = "django.contrib.gis.db.backends.postgis"
 
-# DATABASE_URL = os.getenv("DATABASE_URL")
+DATABASE_URL = os.getenv("DATABASE_URL")
 
-# if DATABASE_URL:
-#     DATABASES = {
-#         "default": dj_database_url.parse(DATABASE_URL, conn_max_age=600)
-#     }
+if DATABASE_URL:
+    DATABASES = {
+        "default": dj_database_url.parse(DATABASE_URL, conn_max_age=600)
+    }
 
-#     # 🔥 REQUIRED for GeoDjango
-#     DATABASES["default"]["ENGINE"] = "django.contrib.gis.db.backends.postgis"
+    DATABASES["default"]["ENGINE"] = "django.contrib.gis.db.backends.postgis"
 
-# else:
-#     DATABASES = {
-#         "default": {
-#             "ENGINE": "django.contrib.gis.db.backends.postgis",
-#             "NAME": os.getenv("DB_NAME"),
-#             "USER": os.getenv("DB_USER"),
-#             "PASSWORD": os.getenv("DB_PASSWORD"),
-#             "HOST": os.getenv("DB_HOST", "localhost"),
-#             "PORT": os.getenv("DB_PORT", "5432"),
-#         }
-#     }
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.contrib.gis.db.backends.postgis",
+            "NAME": os.getenv("DB_NAME"),
+            "USER": os.getenv("DB_USER"),
+            "PASSWORD": os.getenv("DB_PASSWORD"),
+            "HOST": os.getenv("DB_HOST", "localhost"),
+            "PORT": os.getenv("DB_PORT", "5432"),
+        }
+    }
 
+print(DATABASES)
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators

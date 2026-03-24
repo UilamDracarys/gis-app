@@ -116,10 +116,10 @@ const FeatureDialog = ({ open, setOpen, onCancel, onSave}: Props) => {
 						</Field>
 					</FieldGroup>
 					<DialogFooter>
-						<Button variant="outline" onClick={onCancel}>
+						<Button className="cursor-pointer" type="button" variant="outline" onClick={onCancel}>
 							Cancel
 						</Button>
-						<Button type="submit">Save changes</Button>
+						<Button className="cursor-pointer" type="submit">Save changes</Button>
 					</DialogFooter>
 				</form>
 			</DialogContent>
