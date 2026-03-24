@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework import status
-
+from django.conf import settings
 
 class CurrentUserView(APIView):
     permission_classes = [IsAuthenticated]
@@ -33,16 +33,16 @@ class CookieTokenObtainPairView(TokenObtainPairView):
                 key="access_token",
                 value=access_token,
                 httponly=True,
-                secure=False,        # Use True in production (HTTPS only)
-                samesite="Lax",     # Or "None" if frontend on different domain
+                secure=settings.SESSION_COOKIE_SECURE,        # Use True in production (HTTPS only)
+                samesite=settings.SESSION_COOKIE_SAMESITE,     # Or "None" if frontend on different domain
                 max_age=60 * 5,     # 5 minutes (optional)
             )
             response.set_cookie(
                 key="refresh_token",
                 value=refresh_token,
                 httponly=True,
-                secure=False,
-                samesite="Lax",
+                secure=settings.SESSION_COOKIE_SECURE,        # Use True in production (HTTPS only)
+                samesite=settings.SESSION_COOKIE_SAMESITE,    
                 max_age=60 * 60 * 24 * 7,  # 7 days
             )
 
@@ -66,8 +66,8 @@ class CookieTokenRefreshView(TokenRefreshView):
                 key="access_token",
                 value=access_token,
                 httponly=True,
-                secure=True,
-                samesite="Lax",
+                secure=settings.SESSION_COOKIE_SECURE,        # Use True in production (HTTPS only)
+                samesite=settings.SESSION_COOKIE_SAMESITE,    
                 max_age=60 * 5,
             )
             response.data.pop("access", None)
