@@ -75,7 +75,8 @@ const Map = () => {
 	};
 
 	const handleLogout = async () => {
-		await auth.logout();
+		const res = await auth.logout();
+		console.log("LOGOUT", res)
 		navigate("/login");
 	};
 

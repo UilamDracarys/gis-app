@@ -80,8 +80,17 @@ class CookieTokenRefreshView(TokenRefreshView):
 class LogoutView(APIView):
     def post(self, request):
         response = Response({"message": "Logged out successfully"}, status=status.HTTP_200_OK)
-        response.delete_cookie("access_token")
-        response.delete_cookie("refresh_token")
+        response.delete_cookie(
+            "access_token",
+            path="/",
+            samesite="None",
+        )
+
+        response.delete_cookie(
+            "refresh_token",
+            path="/",
+            samesite="None",
+        )
         return response
     
 

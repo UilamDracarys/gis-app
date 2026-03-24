@@ -36,7 +36,7 @@ const Login = () => {
 
 	return (
 		<>
-		<title>Login | SimpleGIS</title>
+			<title>Login | SimpleGIS</title>
 			<div className="bg-blue-50 h-screen w-full flex justify-center items-center">
 				<div
 					className="login w-[90vw] md:w-[40vw] max-w-120 bg-blue-100 rounded-lg shadow-md shadow-gray-500
