@@ -81,34 +81,24 @@ SIMPLE_JWT = {
 SESSION_COOKIE_HTTPONLY = True
 CSRF_COOKIE_HTTPONLY = False  # must be False for frontend access
 
-SESSION_COOKIE_SAMESITE = 'Lax'
-CSRF_COOKIE_SAMESITE = 'Lax'
+SESSION_COOKIE_SAMESITE = os.getenv("SESSION_COOKIE_SAMESITE")
+CSRF_COOKIE_SAMESITE = os.getenv("CSRF_COOKIE_SAMESITE")
 
-SESSION_COOKIE_SECURE = False  # True in production
-CSRF_COOKIE_SECURE = False     # True in production
-
-CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:5173",  
-    "http://localhost:3000", 
-]
+SESSION_COOKIE_SECURE = os.getenv("SESSION_COOKIE_SECURE")  # True in production
+CSRF_COOKIE_SECURE = os.getenv("CSRF_COOKIE_SECURE")     # True in production
 
 FRONTEND_URL = os.getenv("FRONTEND_URL")
 BACKEND_URL = os.getenv("BACKEND_URL")
 
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = os.getenv("CORS_ALLOW_ALL_ORIGINS")
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-    "http://localhost:3000",
+    origin for origin in os.getenv("CORS_ALLOWED_ORIGINS", "").split(",") if origin
 ]
 
-if FRONTEND_URL:
-    CSRF_TRUSTED_ORIGINS.append(FRONTEND_URL)
-    CORS_ALLOWED_ORIGINS.append(FRONTEND_URL)
-
-if BACKEND_URL:
-    CSRF_TRUSTED_ORIGINS.append(BACKEND_URL)
-    CORS_ALLOWED_ORIGINS.append(BACKEND_URL)
+CSRF_TRUSTED_ORIGINS = [
+    origin for origin in os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",") if origin
+]
 
 CORS_ALLOW_CREDENTIALS = True
 
