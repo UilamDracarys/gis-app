@@ -7,8 +7,6 @@ import Swal from "sweetalert2";
 import { useAuth } from "@/contexts/AuthContext";
 
 const Home = () => {
-	const user = useAuth();
-	console.log("USER", user)
 	const [loading, setLoading] = useState(true);
 	const djangoItemsRef = useRef<L.FeatureGroup | null>(null);
 	const [editingLayer, setEditingLayer] = useState<any>(null);

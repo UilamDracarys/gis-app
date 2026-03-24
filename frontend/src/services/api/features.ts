@@ -5,6 +5,7 @@ const featuresApi = {
 	async fetchAll(): Promise<Feature[] | null> {
 		try {
 			const res = await client.get("/features/");
+			console.log(res.data);
 			return res.data;
 		} catch {
 			return null;
