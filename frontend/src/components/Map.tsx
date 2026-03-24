@@ -5,7 +5,7 @@ import {
 	FeatureGroup,
 } from "react-leaflet";
 import ActionBar from "./ActionBar";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState } from "react";
 import FeatureDialog from "./FeatureDialog";
 import FeatureLoader from "./FeatureLoader";
 import L from "leaflet";
@@ -16,7 +16,6 @@ import { LogOut, Check, Ban } from "lucide-react";
 const { BaseLayer, Overlay } = LayersControl;
 import auth from "@/services/api/auth";
 import { useNavigate } from "react-router-dom";
-import Swal from "sweetalert2";
 
 const Map = () => {
 	const navigate = useNavigate();
