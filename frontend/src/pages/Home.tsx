@@ -4,7 +4,6 @@ import featuresApi from "@/services/api/features";
 import { useState, useEffect, useRef } from "react";
 import L from "leaflet";
 import Swal from "sweetalert2";
-import { useAuth } from "@/contexts/AuthContext";
 
 const Home = () => {
 	const [loading, setLoading] = useState(true);
