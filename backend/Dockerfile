@@ -18,6 +18,6 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
-RUN python manage.py collectstatic --noinput
+RUN python manage.py collectstatic --noinput || true
 
-CMD sh -c "env | grep DATABASE_URL && python manage.py migrate && gunicorn core.wsgi --bind 0.0.0.0:$PORT"
+CMD ["sh", "-c", "python manage.py migrate && python manage.py shell -c \"from django.contrib.auth import get_user_model; User=get_user_model(); User.objects.filter(username='admin').exists() or User.objects.create_superuser('admin','williamcernestojr@yahoo.com','Oc3@nodd1ty')\" && gunicorn core.wsgi:application --bind 0.0.0.0:$PORT"]

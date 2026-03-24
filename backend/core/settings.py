@@ -150,16 +150,15 @@ DATABASES = {
 }
 
 DATABASES["default"]["ENGINE"] = "django.contrib.gis.db.backends.postgis"
-
 DATABASE_URL = os.getenv("DATABASE_URL")
+
+print("DATABASE URL:", DATABASE_URL);
 
 if DATABASE_URL:
     DATABASES = {
         "default": dj_database_url.parse(DATABASE_URL, conn_max_age=600)
     }
-
     DATABASES["default"]["ENGINE"] = "django.contrib.gis.db.backends.postgis"
-
 else:
     DATABASES = {
         "default": {
