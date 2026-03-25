@@ -113,6 +113,7 @@ class RegisterView(APIView):
             refresh_token = str(refresh)
 
             response = Response({
+                "access": access_token,
                 "user": {
                     "id": user.id,
                     "first_name": user.first_name,
