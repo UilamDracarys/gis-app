@@ -49,6 +49,7 @@ const Map = () => {
 	};
 
 	const handleSave = async (data: any) => {
+		
 		setLoading(true);
 		const geojson = drawnItemsRef.current?.toGeoJSON();
 

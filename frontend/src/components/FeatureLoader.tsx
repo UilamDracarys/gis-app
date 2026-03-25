@@ -129,7 +129,6 @@ const FeatureLoader = ({
 	}, [djangoItemsRef]);
 
 	const handleDelete = async (feature: any, layer: any) => {
-		setLoading(true);
 		const result = await Swal.fire({
 			title: "Delete feature?",
 			text: "This action cannot be undone.",
@@ -138,9 +137,10 @@ const FeatureLoader = ({
 			confirmButtonText: "Yes, delete it",
 			cancelButtonText: "Cancel",
 		});
-
+		
 		if (!result.isConfirmed) return;
-
+		
+		setLoading(true);
 		const featureId = feature.id;
 
 		const res = await featuresApi.deleteFeature(featureId);
