@@ -15,10 +15,15 @@ const auth = {
 
 	async login(username: string, password: string): Promise<AuthResponse> {
 		try {
+
+			console.log("LOGIN AUTH TS");
+
 			const res = await client.post("/auth/token/", {
 				username,
 				password,
 			});
+			
+			console.log("AUTH TS RES", res)
 			if (res.status == 200) {
 				return { success: true };
 			} else {
