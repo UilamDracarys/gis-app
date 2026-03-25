@@ -13,7 +13,7 @@ import { useEffect, useState, useRef } from "react";
 import { toast } from "react-toastify";
 
 const ActionBar = ({ refs, openDialog }: any) => {
-	const { savedItemsRef, drawnItemsRef, djangoItemsRef } = refs;
+	const { drawnItemsRef, djangoItemsRef } = refs;
 	const map = useMap();
 	const [locateDisabled, setLocateDisabled] = useState(false);
 
@@ -34,29 +34,6 @@ const ActionBar = ({ refs, openDialog }: any) => {
 
 	useEffect(() => {
 		curLocRef.current = new L.FeatureGroup();
-
-		const saved = localStorage.getItem("features");
-
-		if (saved) {
-			const geojson = JSON.parse(saved);
-
-			savedItemsRef.current.clearLayers();
-
-			L.geoJSON(geojson, {
-				style: (feature: any) => {
-					return feature.properties?.style || {};
-				},
-				pointToLayer: (feature: any, latlng: L.LatLngExpression) => {
-					return L.circleMarker(
-						latlng,
-						feature.properties?.style || {},
-					);
-				},
-				onEachFeature: (_feature, layer) => {
-					savedItemsRef.current?.addLayer(layer);
-				},
-			});
-		}
 
 		map.addLayer(curLocRef.current);
 
@@ -80,6 +57,7 @@ const ActionBar = ({ refs, openDialog }: any) => {
 				featureStyles[event.layerType as keyof typeof featureStyles];
 
 			drawnItemsRef.current?.addLayer(layer);
+			console.log(drawnItemsRef)
 			setActiveTool("");
 		};
 
@@ -89,10 +67,6 @@ const ActionBar = ({ refs, openDialog }: any) => {
 			);
 		};
 
-		const handleDeleted = (_event: any) => {
-			const geojson = savedItemsRef.current?.toGeoJSON();
-			localStorage.setItem("features", JSON.stringify(geojson));
-		};
 
 		map.on(L.Draw.Event.CREATED, handleDrawn);
 		map.on("contextmenu", rightClick);
@@ -109,8 +83,6 @@ const ActionBar = ({ refs, openDialog }: any) => {
 
 		return () => {
 			map.off(L.Draw.Event.CREATED, handleDrawn);
-			map.off(L.Draw.Event.DELETED, handleDeleted);
-			map.off("contextmenu", rightClick);
 			map.off("baselayerchange", handleBaseLayerChange);
 		};
 	}, [map]);

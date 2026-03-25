@@ -126,9 +126,10 @@ const FeatureLoader = ({
 		};
 
 		loadFeatures();
-	}, [map]);
+	}, [djangoItemsRef]);
 
 	const handleDelete = async (feature: any, layer: any) => {
+		setLoading(true);
 		const result = await Swal.fire({
 			title: "Delete feature?",
 			text: "This action cannot be undone.",
@@ -145,7 +146,7 @@ const FeatureLoader = ({
 		const res = await featuresApi.deleteFeature(featureId);
 
 		console.log(res);
-
+		setLoading(false);
 		if (res?.success) {
 			djangoItemsRef.current?.removeLayer(layer);
 			toast.success("DELETED!");
@@ -153,6 +154,7 @@ const FeatureLoader = ({
 			toast.error(res?.error);
 			console.error("Error deleting feature:", res?.error);
 		}
+
 	};
 
 	return null;

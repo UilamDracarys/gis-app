@@ -5,8 +5,7 @@ const Home = () => {
 
 	return (
 		<>
-			<Map
-			/>
+			<Map/>
 			<ToastContainer />
 		</>
 	);

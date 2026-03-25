@@ -33,25 +33,34 @@ const FeatureDialog = ({ open, setOpen, onCancel, onSave }: Props) => {
 	const [fillColor, setFillColor] = useState(styles.fillColor);
 	const [fillOpacity, setFillOpacity] = useState([styles.fillOpacity]);
 
-	const [isCustom, setIsCustom] = useState(false);
+	const [isCustom, setIsCustom] = useState(localStorage.getItem("useCustom") === "true" || false);
 
 	const handleSubmit = (e: any) => {
 		e.preventDefault();
 		const formData = new FormData(e.currentTarget);
-		const style = isCustom ? defaultStyles : {
-			color: formData.get("outline-color"),
-			weight: formData.get("outline-width"),
-			fillColor: formData.get("fill-color"),
-			fillOpacity: formData.get("fill-opacity"),
-			radius: defaultStyles.radius,
-		};
+		const style = isCustom
+			? {
+					color: formData.get("outline-color"),
+					weight: formData.get("outline-width"),
+					fillColor: formData.get("fill-color"),
+					fillOpacity: formData.get("fill-opacity"),
+					radius: defaultStyles.radius,
+				}
+			: defaultStyles;
 		formData.delete("outline-color");
 		formData.delete("outline-width");
 		formData.delete("fill-color");
 		formData.delete("fill-opacity");
+
 		formData.append("style", JSON.stringify(style));
 		onSave(formData);
 	};
+
+	const handleStyles = () => {
+		setIsCustom(!isCustom);
+		localStorage.setItem("useCustom", !isCustom as any);
+	}
+
 	return (
 		<Dialog
 			open={open}
@@ -90,7 +99,7 @@ const FeatureDialog = ({ open, setOpen, onCancel, onSave }: Props) => {
 							<Switch
 								id="airplane-mode"
 								checked={isCustom}
-								onCheckedChange={() => setIsCustom(!isCustom)}
+								onCheckedChange={handleStyles}
 							/>
 							<Label htmlFor="airplane-mode">Custom Style</Label>
 						</div>

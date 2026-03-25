@@ -13,7 +13,7 @@ import "leaflet-draw";
 import { toast } from "react-toastify";
 import featuresApi from "@/services/api/features";
 import { LogOut, Check, Ban } from "lucide-react";
-const { BaseLayer, Overlay } = LayersControl;
+const { BaseLayer } = LayersControl;
 import auth from "@/services/api/auth";
 import { useNavigate } from "react-router-dom";
 
@@ -21,18 +21,18 @@ const Map = () => {
 	const navigate = useNavigate();
 
 	const center: [number, number] = [10.493574598800125, 123.41472829999998];
-	const savedItemsRef = useRef<L.FeatureGroup | null>(null);
 	const drawnItemsRef = useRef<L.FeatureGroup | null>(null);
 	const djangoItemsRef = useRef<L.FeatureGroup | null>(null);
 
 	const [loading, setLoading] = useState(false);
+	const [loggingOut, setLoggingOut] = useState(false);
 	const [editingLayer, setEditingLayer] = useState<any>(null);
 
 	const refs = {
-		savedItemsRef: savedItemsRef,
 		drawnItemsRef: drawnItemsRef,
 		djangoItemsRef: djangoItemsRef,
 	};
+
 	const editingLayerRef = useRef<any>(null);
 
 	const defaultBase = localStorage.getItem("basemap") || "Dark";
@@ -49,7 +49,10 @@ const Map = () => {
 	};
 
 	const handleSave = async (data: any) => {
+		setLoading(true);
 		const geojson = drawnItemsRef.current?.toGeoJSON();
+
+		console.log(drawnItemsRef.current)
 
 		L.geoJSON(geojson, {
 			style: JSON.parse(data.get("style")),
@@ -57,7 +60,7 @@ const Map = () => {
 				return L.circleMarker(latlng, feature.properties?.style || {});
 			},
 			onEachFeature: (_feature, layer) => {
-				savedItemsRef.current?.addLayer(layer);
+				djangoItemsRef.current?.addLayer(layer);
 			},
 		});
 
@@ -70,14 +73,17 @@ const Map = () => {
 		localStorage.setItem("savedStyles", data.get("style"));
 		await featuresApi.saveFeature(data);
 
+		setLoading(false);
 		setOpen(false);
 		toast.success("Saved!");
 	};
 
 	const handleLogout = async () => {
+		setLoggingOut(true);
 		const res = await auth.logout();
 		console.log("LOGOUT", res)
 		navigate("/login");
+		setLoggingOut(false);
 	};
 
 	const handleCancelEdits = () => {
@@ -108,6 +114,7 @@ const Map = () => {
 	};
 
 	const handleSaveEdits = async () => {
+		setLoading(true);
 		if (!editingLayerRef.current) return;
 
 		const edited = editingLayerRef.current;
@@ -121,6 +128,7 @@ const Map = () => {
 
 		if (!res?.success) toast.error("Error", res?.error as any);
 
+		setLoading(false);
 		toast.success("Geometry updated");
 		editingLayerRef.current = null;
 		setEditingLayer(null);
@@ -137,9 +145,15 @@ const Map = () => {
 			>
 				{loading && (
 					<div className="absolute inset-0 z-9999 flex items-center justify-center bg-black/40">
-						<span className="text-white text-lg">Loading features...</span>
+						<span className="text-white text-lg">Loading ...</span>
 					</div>
 				)}
+				{loggingOut && (
+					<div className="absolute inset-0 z-9999 flex items-center justify-center bg-black/40">
+						<span className="text-white text-lg">Logging you out...</span>
+					</div>
+				)}
+
 				<FeatureLoader
 					setLoading={setLoading}
 					djangoItemsRef={djangoItemsRef}
@@ -198,17 +212,18 @@ const Map = () => {
 							/>
 						</BaseLayer>
 
-						<Overlay checked name="Saved Features">
-							<FeatureGroup ref={savedItemsRef} />
-						</Overlay>
+						<BaseLayer
+							checked={defaultBase === "ESRI World Imagery"}
+							name="ESRI World Imagery"
+						>
+							<TileLayer
+								attribution="Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community"
+								url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+							/>
+						</BaseLayer>
 
-						<Overlay checked name="Drawn Features">
-							<FeatureGroup ref={drawnItemsRef} />
-						</Overlay>
-
-						<Overlay checked name="Django Features">
-							<FeatureGroup ref={djangoItemsRef} />
-						</Overlay>
+						<FeatureGroup ref={drawnItemsRef} />
+						<FeatureGroup ref={djangoItemsRef} />
 					</LayersControl>
 				</div>
 				<ActionBar

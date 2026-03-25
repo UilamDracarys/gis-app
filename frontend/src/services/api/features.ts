@@ -13,7 +13,9 @@ const featuresApi = {
 	},
 	async saveFeature(data: any) {
 		try {
+			console.log(Object.fromEntries(data));
 			const res = await client.post("/features/", data);
+			
 			if (res.status != 200) {
 				return { success: false };
 			}

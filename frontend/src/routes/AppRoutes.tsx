@@ -31,5 +31,5 @@ export const routes = createRoutesFromElements(
 		>
 			<Route index element={<Home />} />
 		</Route>
-	</>,
+	</>
 );
