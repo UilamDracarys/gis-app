@@ -122,14 +122,14 @@ class RegisterView(APIView):
                 }
             }, status=status.HTTP_201_CREATED)
 
-            response.set_cookie(
-                key="access_token",
-                value=access_token,
-                httponly=True,
-                secure=settings.SESSION_COOKIE_SECURE,
-                samesite=settings.SESSION_COOKIE_SAMESITE,
-                max_age=60 * 5,
-            )
+            # response.set_cookie(
+            #     key="access_token",
+            #     value=access_token,
+            #     httponly=True,
+            #     secure=settings.SESSION_COOKIE_SECURE,
+            #     samesite=settings.SESSION_COOKIE_SAMESITE,
+            #     max_age=60 * 5,
+            # )
 
             response.set_cookie(
                 key="refresh_token",
