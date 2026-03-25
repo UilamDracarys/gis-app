@@ -21,12 +21,15 @@ const Login = () => {
 
 		const res = await auth.login(username, password);
 
+		console.log("LOGIN RESP", res)
+
 		if (res.error) {
 			setError(res.error);
 			return;
 		}
 
 		const user = await auth.getUser();
+		console.log("GET USER:", user)
 
 		if (user) {
 			setUser(user);
@@ -46,7 +49,7 @@ const Login = () => {
 				>
 
 					
-					<img src="public/gis.png" alt="icon" width="100" className="mx-auto"/>
+					<img src="gis.png" alt="icon" width="100" className="mx-auto"/>
 					<h2 className="text-2xl text-center font-bold">Welcome</h2>
 					<p className="text-xs text-center text-gray-600 mb-5">
 						Login with your credentials to get started.
