@@ -130,7 +130,7 @@ const Map = () => {
 		if (!res?.success) toast.error("Error", res?.error as any);
 
 		setLoading(false);
-		toast.success("Geometry updated");
+		toast.success("Geometry updated!");
 		editingLayerRef.current = null;
 		setEditingLayer(null);
 		edited.editing.disable();

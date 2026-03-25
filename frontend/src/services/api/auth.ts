@@ -1,4 +1,4 @@
-import client from "./client";
+import client, { setAccessToken } from "./client";
 import type { User, AuthResponse } from "@/types/auth";
 
 const auth = {
@@ -22,6 +22,9 @@ const auth = {
 				username,
 				password,
 			});
+
+			setAccessToken(res.data.access)
+			
 			
 			console.log("AUTH TS RES", res)
 			if (res.status == 200) {
@@ -43,8 +46,10 @@ const auth = {
 	async logout(): Promise<AuthResponse> {
 		try {
 			await client.post("/auth/logout/");
+			setAccessToken(null);
 			return { success: true };
 		} catch {
+			setAccessToken(null);
 			return { error: "Logout failed" };
 		}
 	},

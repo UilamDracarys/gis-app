@@ -149,7 +149,7 @@ const FeatureLoader = ({
 		setLoading(false);
 		if (res?.success) {
 			djangoItemsRef.current?.removeLayer(layer);
-			toast.success("DELETED!");
+			toast.success("Feature deleted!");
 		} else {
 			toast.error(res?.error);
 			console.error("Error deleting feature:", res?.error);

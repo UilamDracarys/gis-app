@@ -32,14 +32,15 @@ class CookieTokenObtainPairView(TokenObtainPairView):
             refresh_token = data.get("refresh")
 
             # Set tokens in HttpOnly cookies
-            response.set_cookie(
-                key="access_token",
-                value=access_token,
-                httponly=True,
-                secure=settings.SESSION_COOKIE_SECURE,        # Use True in production (HTTPS only)
-                samesite=settings.SESSION_COOKIE_SAMESITE,     # Or "None" if frontend on different domain
-                max_age=60 * 5,     # 5 minutes (optional)
-            )
+            # response.set_cookie(
+            #     key="access_token",
+            #     value=access_token,
+            #     httponly=True,
+            #     secure=settings.SESSION_COOKIE_SECURE,        # Use True in production (HTTPS only)
+            #     samesite=settings.SESSION_COOKIE_SAMESITE,     # Or "None" if frontend on different domain
+            #     max_age=60 * 5,     # 5 minutes (optional)
+            # )
+
             response.set_cookie(
                 key="refresh_token",
                 value=refresh_token,
@@ -50,7 +51,7 @@ class CookieTokenObtainPairView(TokenObtainPairView):
             )
 
             # Remove tokens from response body (optional)
-            response.data.pop("access", None)
+            # response.data.pop("access", None)
             response.data.pop("refresh", None)
 
         return response
@@ -64,16 +65,19 @@ class CookieTokenRefreshView(TokenRefreshView):
         response = super().post(request, *args, **kwargs)
 
         if response.status_code == status.HTTP_200_OK:
-            access_token = response.data.get("access")
-            response.set_cookie(
-                key="access_token",
-                value=access_token,
-                httponly=True,
-                secure=settings.SESSION_COOKIE_SECURE,        # Use True in production (HTTPS only)
-                samesite=settings.SESSION_COOKIE_SAMESITE,    
-                max_age=60 * 5,
-            )
-            response.data.pop("access", None)
+            # access_token = response.data.get("access")
+
+            new_refresh = response.data.get("refresh")
+            if new_refresh:
+                response.set_cookie(
+                    key="refresh_token", # Prev access_token
+                    value=new_refresh, # Change from access_token
+                    httponly=True,
+                    secure=settings.SESSION_COOKIE_SECURE,        # Use True in production (HTTPS only)
+                    samesite=settings.SESSION_COOKIE_SAMESITE,    
+                    max_age=60 * 5,
+                )
+                response.data.pop("refresh", None)
         return response
 
 
