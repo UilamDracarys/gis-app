@@ -1,6 +1,10 @@
 import axios, { AxiosError, type InternalAxiosRequestConfig } from "axios";
 
-const API_URL = import.meta.env.VITE_DJANGO_BACKEND_API_URL as string;
+const isLocalhost = window.location.hostname === "localhost";
+
+console.log("ISLOCALHOST", isLocalhost)
+
+const API_URL = isLocalhost ? "http://localhost:8000/api" : import.meta.env.VITE_DJANGO_BACKEND_API_URL as string;
 
 const client = axios.create({
 	baseURL: API_URL,

@@ -83,13 +83,13 @@ class LogoutView(APIView):
         response.delete_cookie(
             "access_token",
             path="/",
-            samesite="None",
+            samesite=settings.SESSION_COOKIE_SAMESITE,
         )
 
         response.delete_cookie(
             "refresh_token",
             path="/",
-            samesite="None",
+            samesite=settings.SESSION_COOKIE_SAMESITE,
         )
         return response
     

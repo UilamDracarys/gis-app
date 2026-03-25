@@ -37,13 +37,16 @@ const Login = () => {
 	return (
 		<>
 			<title>Login | SimpleGIS</title>
-			<div className="bg-blue-50 h-screen w-full flex justify-center items-center">
+			<div className="bg-black/10 h-screen w-full flex justify-center items-center">
 				<div
-					className="login w-[90vw] md:w-[40vw] max-w-120 bg-blue-100 rounded-lg shadow-md shadow-gray-500
+					className="login w-[90vw] md:w-[40vw] max-w-120 bg-white rounded-lg shadow-md shadow-gray-500
         p-5
         flex flex-col gap-2
         "
 				>
+
+					
+					<img src="public/gis.png" alt="icon" width="100" className="mx-auto"/>
 					<h2 className="text-2xl text-center font-bold">Welcome</h2>
 					<p className="text-xs text-center text-gray-600 mb-5">
 						Login with your credentials to get started.
@@ -54,7 +57,7 @@ const Login = () => {
 								<Label htmlFor="username">Username</Label>
 								<Input
 									id="username"
-									className="bg-white mb-2 h-10"
+									className="bg-white mb-2 h-10 "
 									placeholder="Enter your username..."
 									value={username}
 									onChange={(e) =>
@@ -83,7 +86,7 @@ const Login = () => {
 							<p className="text-red-500 text-sm mb-2">{error}</p>
 						)}
 
-						<button className="bg-blue-950 w-full rounded-md text-white font-bold h-10 cursor-pointer hover:bg-blue-400 transition-all duration-300 ease">
+						<button className="bg-black  hover:bg-white hover:text-black hover:border hover:border-black active:bg-black/30 active:text-white active:border-none w-full rounded-md text-white font-bold h-10 cursor-pointer  transition-all duration-300 ease">
 							Login
 						</button>
 
@@ -94,13 +97,14 @@ const Login = () => {
 							</span>
 							<div className="grow border-t border-gray-300" />
 						</div>
-					</form>
+
 					<Link
 						to="/register"
-						className="flex justify-center items-center bg-blue-950/20 border-blue-950 border w-full rounded-md text-blue-950 font-bold h-10 cursor-pointer hover:bg-blue-400 transition-all duration-300 ease"
+						className="flex justify-center items-center bg-white/20 border-black border w-full rounded-md text-black font-bold h-10 cursor-pointer hover:bg-black hover:text-white active:bg-black/30 active:text-white active:border-none  transition-all duration-300 ease"
 					>
 						Register
 					</Link>
+					</form>
 				</div>
 			</div>
 		</>

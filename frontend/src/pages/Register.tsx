@@ -75,25 +75,26 @@ const Register = () => {
 
 	return (
 		<>
-		<title>Register | SimpleGIS</title>
-			<div className="bg-blue-50 h-screen w-full flex justify-center items-center">
-				<div
-					className="login w-[90vw] md:w-[40vw] max-w-120 bg-blue-100 rounded-lg shadow-md shadow-gray-500
-        p-5
-        flex flex-col gap-2
-        "
-				>
+			<title>Register | SimpleGIS</title>
+			<div className="bg-black/10 h-screen w-full flex justify-center overflow-y-auto ">
+				<div className="self-start register my-10 w-[90vw] md:w-[40vw] max-w-120 bg-white rounded-lg shadow-md shadow-gray-500 px-5 py-8 flex flex-col">
+					<img
+						src="gis.png"
+						alt="icon"
+						width="100"
+						className="mx-auto"
+					/>
 					<h2 className="text-2xl text-center font-bold">Register</h2>
 					<p className="text-xs text-center text-gray-600 mb-5">
 						Fill the form below.
 					</p>
 					<form onSubmit={handleSubmit}>
-						<FieldGroup>
+						<FieldGroup className="gap-5 mb-5">
 							<Field>
 								<Label htmlFor="first-name">First Name</Label>
 								<Input
 									id="first-name"
-									className="bg-white mb-2 h-10"
+									className="bg-white h-10"
 									placeholder="Enter your first name..."
 									required
 									value={firstName}
@@ -106,7 +107,7 @@ const Register = () => {
 								<Label htmlFor="last-name">Last Name</Label>
 								<Input
 									id="last-name"
-									className="bg-white mb-2 h-10"
+									className="bg-white h-10"
 									placeholder="Enter your last name..."
 									required
 									value={lastName}
@@ -120,7 +121,7 @@ const Register = () => {
 								<Label htmlFor="username">Username</Label>
 								<Input
 									id="username"
-									className="bg-white mb-2 h-10"
+									className="bg-white h-10"
 									placeholder="Enter your username..."
 									required
 									value={username}
@@ -133,7 +134,7 @@ const Register = () => {
 								<Label htmlFor="email">Email</Label>
 								<Input
 									id="username"
-									className="bg-white mb-2 h-10"
+									className="bg-white h-10"
 									placeholder="e.g. john.doe@email.com"
 									type="email"
 									required
@@ -147,7 +148,7 @@ const Register = () => {
 								<Input
 									id="password"
 									type="password"
-									className="bg-white mb-5 h-10"
+									className="bg-white h-10"
 									placeholder="Enter your password..."
 									required
 									value={password}
@@ -164,7 +165,7 @@ const Register = () => {
 								<Input
 									id="confirm-password"
 									type="password"
-									className="bg-white mb-5 h-10"
+									className="bg-white h-10"
 									placeholder="Confirm your password..."
 									required
 									value={confirmPassword}
@@ -179,7 +180,7 @@ const Register = () => {
 							<p className="text-red-500 text-sm mb-2">{error}</p>
 						)}
 
-						<button className="bg-blue-950 w-full rounded-md text-white font-bold h-10 cursor-pointer hover:bg-blue-400 transition-all duration-300 ease">
+						<button className="bg-black  hover:bg-white hover:text-black hover:border hover:border-black active:bg-black/30 active:text-white active:border-none w-full rounded-md text-white font-bold h-10 cursor-pointer  transition-all duration-300 ease">
 							Register
 						</button>
 
@@ -190,13 +191,13 @@ const Register = () => {
 							</span>
 							<div className="grow border-t border-gray-300" />
 						</div>
+						<Link
+							to="/login"
+							className="min-h-10 flex justify-center items-center bg-white/20 border-black border w-full rounded-md text-black font-bold h-10 cursor-pointer hover:bg-black hover:text-white active:bg-black/30 active:text-white active:border-none  transition-all duration-300 ease"
+						>
+							Login
+						</Link>
 					</form>
-					<Link
-						to="/login"
-						className="flex justify-center items-center bg-blue-950/20 border-blue-950 border w-full rounded-md text-blue-950 font-bold h-10 cursor-pointer hover:bg-blue-400 transition-all duration-300 ease"
-					>
-						Login
-					</Link>
 				</div>
 			</div>
 		</>
