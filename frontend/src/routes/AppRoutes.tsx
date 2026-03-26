@@ -5,6 +5,8 @@ import Home from "../pages/Home";
 import ProtectedRoute from "./ProtectedRoutes";
 import Register from "@/pages/Register";
 import PublicRoute from "./PublicRoute";
+import Features from "@/pages/Features";
+import Settings from "@/pages/Settings";
 
 export const routes = createRoutesFromElements(
 	<>
@@ -30,6 +32,8 @@ export const routes = createRoutesFromElements(
 			}
 		>
 			<Route index element={<Home />} />
+			<Route path="/features" element={<Features />} />
+			<Route path="/settings" element={<Settings />} />
 		</Route>
 	</>
 );

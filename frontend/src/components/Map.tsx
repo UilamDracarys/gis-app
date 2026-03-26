@@ -12,20 +12,19 @@ import L from "leaflet";
 import "leaflet-draw";
 import { toast } from "react-toastify";
 import featuresApi from "@/services/api/features";
-import { LogOut, Check, Ban } from "lucide-react";
+import {Check, Ban } from "lucide-react";
 const { BaseLayer } = LayersControl;
-import auth from "@/services/api/auth";
-import { useNavigate } from "react-router-dom";
+import ResizeMap from "./ResizeMap";
+import { useSidebar } from "./ui/sidebar";
 
 const Map = () => {
-	const navigate = useNavigate();
 
 	const center: [number, number] = [10.493574598800125, 123.41472829999998];
 	const drawnItemsRef = useRef<L.FeatureGroup | null>(null);
 	const djangoItemsRef = useRef<L.FeatureGroup | null>(null);
+	const { open: isSidebarOpen } = useSidebar();
 
 	const [loading, setLoading] = useState(false);
-	const [loggingOut, setLoggingOut] = useState(false);
 	const [editingLayer, setEditingLayer] = useState<any>(null);
 
 	const refs = {
@@ -77,14 +76,6 @@ const Map = () => {
 		setLoading(false);
 		setOpen(false);
 		toast.success("Saved!");
-	};
-
-	const handleLogout = async () => {
-		setLoggingOut(true);
-		const res = await auth.logout();
-		console.log("LOGOUT", res)
-		navigate("/login");
-		setLoggingOut(false);
 	};
 
 	const handleCancelEdits = () => {
@@ -144,29 +135,20 @@ const Map = () => {
 				zoomControl={false}
 				style={{ height: "100%", width: "100%" }}
 			>
+				<ResizeMap isSidebarOpen={isSidebarOpen} />
+
 				{loading && (
 					<div className="absolute inset-0 z-9999 flex items-center justify-center bg-black/40">
 						<span className="text-white text-lg">Loading ...</span>
 					</div>
 				)}
-				{loggingOut && (
-					<div className="absolute inset-0 z-9999 flex items-center justify-center bg-black/40">
-						<span className="text-white text-lg">Logging you out...</span>
-					</div>
-				)}
-
+				
 				<FeatureLoader
 					setLoading={setLoading}
 					djangoItemsRef={djangoItemsRef}
 					editingLayerRef={editingLayerRef}
 					setEditingLayer={setEditingLayer}
 				/>
-				<button
-					className="absolute top-2 left-2 z-9999 bg-white/90 p-3 rounded-md cursor-pointer group"
-					onClick={handleLogout}
-				>
-					<LogOut className="transition-transform group-hover:scale-130 duration-300 " />
-				</button>
 				{editingLayer && (
 					<div className="absolute right-2 top-16 z-9999 flex flex-col gap-1">
 						<button
