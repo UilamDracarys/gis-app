@@ -14,26 +14,39 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "./ui/slider";
 import { Textarea } from "./ui/textarea";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 type Props = {
 	open: boolean;
 	setOpen: (open: boolean) => void;
 	onCancel: () => void;
 	onSave: (data: any) => void;
+	featureData?: any;
 };
 
-const FeatureDialog = ({ open, setOpen, onCancel, onSave }: Props) => {
+const FeatureDialog = ({
+	open,
+	setOpen,
+	onCancel,
+	onSave,
+	featureData,
+}: Props) => {
 	const savedStyles = localStorage.getItem("savedStyles");
 
 	const styles: any = savedStyles ? JSON.parse(savedStyles) : defaultStyles;
 
+
+	const [id, setId] = useState(null);
+	const [name, setName] = useState("");
+	const [notes, setNotes] = useState("");
 	const [outlineColor, setOutlineColor] = useState(styles.color);
 	const [outlineWidth, setOutlineWidth] = useState([styles.weight]);
 	const [fillColor, setFillColor] = useState(styles.fillColor);
 	const [fillOpacity, setFillOpacity] = useState([styles.fillOpacity]);
 
-	const [isCustom, setIsCustom] = useState(localStorage.getItem("useCustom") === "true" || false);
+	const [isCustom, setIsCustom] = useState(
+		localStorage.getItem("useCustom") === "true" || false,
+	);
 
 	const handleSubmit = (e: any) => {
 		e.preventDefault();
@@ -59,7 +72,32 @@ const FeatureDialog = ({ open, setOpen, onCancel, onSave }: Props) => {
 	const handleStyles = () => {
 		setIsCustom(!isCustom);
 		localStorage.setItem("useCustom", !isCustom as any);
-	}
+	};
+
+
+	useEffect(() => {
+		if (open && featureData) {
+			setId(featureData.id || null);
+			setName(featureData.name || "");
+			setNotes(featureData.notes || "");
+			setOutlineColor(featureData.style?.color || styles.color)
+			setOutlineWidth([featureData.style?.weight || styles.weight]); 
+			setFillColor(featureData.style?.fillColor || styles.fillColor);
+			setFillOpacity([featureData.style?.fillOpacity || styles.fillOpacity]);
+		}
+	}, [open, featureData]);
+
+	useEffect(() => {
+		if (!open) {
+			setId(null);
+			setName("");
+			setNotes("");
+			setOutlineColor(styles.color);
+			setOutlineWidth([styles.weight]);
+			setFillColor(styles.fillColor);
+			setFillOpacity([styles.fillOpacity]);
+		}
+	}, [open])
 
 	return (
 		<Dialog
@@ -85,14 +123,20 @@ const FeatureDialog = ({ open, setOpen, onCancel, onSave }: Props) => {
 						</DialogDescription>
 					</DialogHeader>
 					<FieldGroup className="mt-5">
+						<input type="hidden" name="id" value={id || undefined}/>
 						<Field>
 							<Label htmlFor="name">Name</Label>
-							<Input id="name" name="name" required />
+							<Input
+								id="name"
+								name="name"
+								required
+								defaultValue={name}
+							/>
 						</Field>
 
 						<Field>
 							<Label htmlFor="username">Notes</Label>
-							<Textarea id="notes" name="notes" />
+							<Textarea id="notes" name="notes" defaultValue={notes}/>
 						</Field>
 
 						<div className="flex items-center space-x-2 mb-3">

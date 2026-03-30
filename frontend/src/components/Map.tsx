@@ -12,17 +12,16 @@ import L from "leaflet";
 import "leaflet-draw";
 import { toast } from "react-toastify";
 import featuresApi from "@/services/api/features";
-import {Check, Ban } from "lucide-react";
+import { Check, Ban } from "lucide-react";
 const { BaseLayer } = LayersControl;
 import ResizeMap from "./ResizeMap";
 import { useSidebar } from "./ui/sidebar";
 import MapEvents from "./MapEvents";
 
 const Map = () => {
-
 	const center: [number, number] = [
-		Number(localStorage.getItem("centerY")) ?? 10.493574598800125, 
-		Number(localStorage.getItem("centerX")) ?? 123.41472829999998
+		Number(localStorage.getItem("centerY")) ?? 10.493574598800125,
+		Number(localStorage.getItem("centerX")) ?? 123.41472829999998,
 	];
 	const zoom: number = Number(localStorage.getItem("zoom")) ?? 13;
 	const drawnItemsRef = useRef<L.FeatureGroup | null>(null);
@@ -42,8 +41,11 @@ const Map = () => {
 	const defaultBase = localStorage.getItem("basemap") || "Dark";
 
 	const [open, setOpen] = useState(false);
+	const [editingFeature, setEditingFeature] = useState<any>(null);
 
-	const openDialog = () => {
+	const openDialog = (featureData?: any) => {
+		console.log(featureData);
+		setEditingFeature(featureData || null);
 		setOpen(true);
 	};
 
@@ -53,32 +55,44 @@ const Map = () => {
 	};
 
 	const handleSave = async (data: any) => {
-		
+		console.log(Object.fromEntries(data));
 		setLoading(true);
-		const geojson = drawnItemsRef.current?.toGeoJSON();
 
+		if (data.get("id") !== null && data.get("id") !== "") {
+			if (!editingLayerRef.current) return;
 
-		L.geoJSON(geojson, {
-			style: JSON.parse(data.get("style")),
-			pointToLayer: (feature: any, latlng: L.LatLngExpression) => {
-				return L.circleMarker(latlng, feature.properties?.style || {});
-			},
-			onEachFeature: (_feature, layer) => {
-				
-				djangoItemsRef.current?.addLayer(layer);
-			},
-		});
+			const layer = editingLayerRef.current;
+			layer.setStyle(JSON.parse(data.get("style")));
 
-		drawnItemsRef.current?.clearLayers();
-		data.append(
-			"geom",
-			JSON.stringify((geojson as any).features[0].geometry),
-		);
+			const res = await featuresApi.updateAttributes(data.get("id"), data);
+			console.log("UPDATED", res?.data)
+		} else {
+			const geojson = drawnItemsRef.current?.toGeoJSON();
 
-		localStorage.setItem("savedStyles", data.get("style"));
-		const res = await featuresApi.saveFeature(data);
+			L.geoJSON(geojson, {
+				style: JSON.parse(data.get("style")),
+				pointToLayer: (feature: any, latlng: L.LatLngExpression) => {
+					return L.circleMarker(
+						latlng,
+						feature.properties?.style || {},
+					);
+				},
+				onEachFeature: (_feature, layer) => {
+					djangoItemsRef.current?.addLayer(layer);
+				},
+			});
 
-		console.log("SAVED", res);
+			drawnItemsRef.current?.clearLayers();
+			data.append(
+				"geom",
+				JSON.stringify((geojson as any).features[0].geometry),
+			);
+
+			localStorage.setItem("savedStyles", data.get("style"));
+			const res = await featuresApi.saveFeature(data);
+
+			console.log("SAVED", res);
+		}
 
 		setLoading(false);
 		setOpen(false);
@@ -150,13 +164,15 @@ const Map = () => {
 						<span className="text-white text-lg">Loading ...</span>
 					</div>
 				)}
-				
+
 				<FeatureLoader
 					setLoading={setLoading}
 					djangoItemsRef={djangoItemsRef}
 					editingLayerRef={editingLayerRef}
 					setEditingLayer={setEditingLayer}
+					openDialog={openDialog}
 				/>
+
 				{editingLayer && (
 					<div className="absolute right-2 top-16 z-9999 flex flex-col gap-1">
 						<button
@@ -228,6 +244,7 @@ const Map = () => {
 				setOpen={setOpen}
 				onCancel={handleCancel}
 				onSave={handleSave}
+				featureData={editingFeature}
 			/>
 		</div>
 	);

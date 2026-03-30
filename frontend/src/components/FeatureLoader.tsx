@@ -10,6 +10,7 @@ const FeatureLoader = ({
 	editingLayerRef,
 	setEditingLayer,
 	setLoading,
+	openDialog,
 }: any) => {
 	const map = useMap();
 	const hasLoaded = useRef(false);
@@ -25,7 +26,6 @@ const FeatureLoader = ({
 
 			if (data) {
 				console.log("Data fetched! Loading...");
-				console.log(data);
 
 				L.geoJSON(data as any, {
 					style: (feature: any) => {
@@ -72,17 +72,25 @@ const FeatureLoader = ({
 										? ""
 										: "sqm";
 
+						const featureData = {
+							id: _feature.id,
+							name: _feature.properties.name,
+							notes: _feature.properties.notes,
+							style: _feature.properties.style,
+						}
+
+
 						const popupContent = `
 							<div class="feature-popup-content">
 								<div>
 									<table class="popup-content-table">
 										<tr>
 											<th>ID</th>
-											<td>${_feature.id}</td>
+											<td>${featureData.id}</td>
 										</tr>
 										<tr>
 											<th>Name</th>
-											<td>${_feature.properties.name}</td>
+											<td>${featureData.name}</td>
 										</tr>
 										<tr>
 											<th>Measure</th>
@@ -90,7 +98,7 @@ const FeatureLoader = ({
 										</tr>
 										<tr>
 											<th>Notes</th>
-											<td>${_feature.properties.notes}</td>
+											<td>${featureData.notes}</td>
 										</tr>
 										<tr>
 											<th>Created By</th>
@@ -102,9 +110,10 @@ const FeatureLoader = ({
 										</tr>
 									</table>
 								</div>
-								<div class="controls">
-									<button class="edit">Edit Geometry</button>
-									<button class="delete">Delete</button>
+								<div class="controls grid grid-cols-3 gap-1 mt-2">
+									<button class="edit-att hover:font-bold active:border active:border-green-600 p-2 rounded-md cursor-pointer bg-green-300 hover:bg-green-100">Edit Attributes</button>
+									<button class="edit hover:font-bold active:border active:border-orange-600 p-2 rounded-md cursor-pointer bg-orange-300 hover:bg-orange-100">Edit Geometry</button>
+									<button class="delete hover:font-bold active:border active:border-red-600 p-2 rounded-md cursor-pointer bg-red-300 hover:bg-red-100" >Delete</button>
 								</div>
 							</div>
 
@@ -114,6 +123,17 @@ const FeatureLoader = ({
 						layer.on("popupopen", () => {
 							const popupEl = layer.getPopup()?.getElement();
 							if (!popupEl) return;
+
+
+							const editAttBtn = popupEl.querySelector(".edit-att");
+							editAttBtn?.addEventListener("click", () => {
+
+								const editable = layer as any;
+								
+								editingLayerRef.current = editable;
+								openDialog(featureData);
+								layer.closePopup();
+							})
 
 							const deleteBtn = popupEl.querySelector(".delete");
 							deleteBtn?.addEventListener("click", () => {
@@ -135,6 +155,18 @@ const FeatureLoader = ({
 									editingLayerRef.current.editing?.disable();
 								}
 
+								const vertexIcon = new L.DivIcon({
+									className: "",
+									iconSize: [20, 20],
+									iconAnchor: [10, 10],
+									html: '<div style="width:20px;height:20px;border-radius:50%;background:#3b82f6;border:2px solid white;box-shadow:0 1px 3px rgba(0,0,0,0.4)"></div>',
+								});
+
+								if (editable.editing?.options) {
+									editable.editing.options.icon = vertexIcon;
+									editable.editing.options.touchIcon = vertexIcon;
+								}
+
 								editable.editing?.enable();
 
 								editingLayerRef.current = editable;
@@ -142,6 +174,7 @@ const FeatureLoader = ({
 
 								layer.closePopup();
 							});
+
 						});
 
 						djangoItemsRef.current?.addLayer(layer);
@@ -172,7 +205,6 @@ const FeatureLoader = ({
 
 		const res = await featuresApi.deleteFeature(featureId);
 
-		console.log(res);
 		setLoading(false);
 		if (res?.success) {
 			djangoItemsRef.current?.removeLayer(layer);

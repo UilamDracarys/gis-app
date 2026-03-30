@@ -3,51 +3,53 @@ import {
 	SidebarInset,
 	SidebarProvider,
 	SidebarTrigger,
+	useSidebar,
 } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const MainLayout = () => {
 	const [loggingOut, setLoggingOut] = useState(false);
 
-	const handleCollapse = () => {
-		console.log("isSidebarOpen", !open);
-		localStorage.setItem("sidebarOpen", JSON.stringify(!open));
-	};
-
 	return (
 		<SidebarProvider>
-			<AppSidebar
-				setLoggingOut={setLoggingOut}
-				handleCollapse={handleCollapse}
-			/>
 			<LayoutContent
 				loggingOut={loggingOut}
-				handleCollapse={handleCollapse}
+				setLoggingOut={setLoggingOut}
 			/>
 		</SidebarProvider>
 	);
 };
 
-function LayoutContent({ loggingOut, handleCollapse }: any) {
+function LayoutContent({ loggingOut, setLoggingOut }: any) {
+	const { open, setOpen, setOpenMobile } = useSidebar();
+
+	useEffect(() => {
+		const sidebarStatus = localStorage.getItem("sidebarOpen");
+		setOpen(sidebarStatus === "true");
+	}, []);
+
+	const handleCollapse = () => {
+		localStorage.setItem("sidebarOpen", String(!open));
+	}
 
 	return (
-		<SidebarInset className="z-0">
-			<main className="w-full overflow-hidden relative">
-				<SidebarTrigger
-					onClick={handleCollapse}
-					className="absolute top-1 left-1 z-990 bg-white"
-				/>
-				{loggingOut && (
-					<div className="absolute inset-0 z-9999 flex items-center justify-center bg-black/40">
-						<span className="text-white text-lg">
-							Logging you out...
-						</span>
-					</div>
-				)}
-				<Outlet />
-			</main>
-		</SidebarInset>
+		<>
+			<AppSidebar setLoggingOut={setLoggingOut} setOpenMobile={setOpenMobile} handleCollapse={handleCollapse}/>
+			<SidebarInset className="z-0">
+				<main className="w-full overflow-hidden relative">
+					<SidebarTrigger className="absolute top-1 left-1 z-990 bg-white" onClick={handleCollapse}/>
+					{loggingOut && (
+						<div className="absolute inset-0 z-9999 flex items-center justify-center bg-black/40">
+							<span className="text-white text-lg">
+								Logging you out...
+							</span>
+						</div>
+					)}
+					<Outlet />
+				</main>
+			</SidebarInset>
+		</>
 	);
 }
 

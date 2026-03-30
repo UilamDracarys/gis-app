@@ -24,12 +24,12 @@ const Features = () => {
 				<table className="w-full border">
 					<thead className="border">
 						<tr>
-							<th className="py-3">ID</th>
-							<th className="py-3">Type</th>
-							<th className="py-3">Name</th>
-							<th className="py-3">Measure</th>
-							<th className="py-3">Unit</th>
-							<th className="py-3">Notes</th>
+							<th className="p-3">ID</th>
+							<th className="p-3">Type</th>
+							<th className="p-3">Name</th>
+							<th className="p-3">Measure</th>
+							<th className="p-3">Unit</th>
+							<th className="p-3">Notes</th>
 						</tr>
 					</thead>
 					<tbody className="text-center">
@@ -61,18 +61,18 @@ const Features = () => {
 
 							return (
 								<tr key={index} className="odd:bg-gray-100">
-									<td className="py-3">{feature.id}</td>
-									<td className="py-3">
+									<td className="p-3">{feature.id}</td>
+									<td className="p-3">
 										{feature.geometry.type}
 									</td>
-									<td className="py-3 font-bold">
+									<td className="p-3 font-bold">
 										{feature.properties.name}
 									</td>
-									<td className="py-3 text-right">
+									<td className="p-3 text-right">
 										{measure?.toFixed(2)}
 									</td>
-									<td className="py-3">{measureUnit}</td>
-									<td className="py-3">
+									<td className="p-3">{measureUnit}</td>
+									<td className="p-3">
 										{feature.properties.notes}
 									</td>
 								</tr>

@@ -5,7 +5,6 @@ const featuresApi = {
 	async fetchAll(): Promise<Feature[] | null> {
 		try {
 			const res = await client.get("/features/");
-			console.log(res.data);
 			return res.data;
 		} catch {
 			return null;
@@ -14,6 +13,7 @@ const featuresApi = {
 	async saveFeature(data: any) {
 		try {
 			console.log(Object.fromEntries(data));
+			
 			const res = await client.post("/features/", data);
 			
 			if (res.status != 200) {
@@ -33,6 +33,24 @@ const featuresApi = {
 			}
 			return {success: true};
 		} catch (error: any) {
+			console.error(error.message);
+		}
+	},
+	async updateAttributes(id: any, data: any) {
+
+		try {
+			console.log(data.get("style"));
+
+			const res = await client.patch(`/features/${id}/`, {
+				name: data.get("name"),
+				notes: data.get("notes"),
+				style: JSON.parse(data.get("style")),
+			})
+
+			console.log(res)
+
+			return { success: true, data: res.data};
+		} catch(error: any) {
 			console.error(error.message);
 		}
 	},
