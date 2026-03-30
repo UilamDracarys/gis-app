@@ -67,7 +67,6 @@ const ActionBar = ({ refs, openDialog }: any) => {
 			);
 		};
 
-
 		map.on(L.Draw.Event.CREATED, handleDrawn);
 		map.on("contextmenu", rightClick);
 		map.on("baselayerchange", handleBaseLayerChange);
@@ -151,6 +150,7 @@ const ActionBar = ({ refs, openDialog }: any) => {
 
 		if (featureType == "Polygon") {
 			drawer = new L.Draw.Polygon(map as any, {
+				allowIntersection: false,
 				shapeOptions: featureStyles["polygon"],
 			});
 		} else if (featureType == "Polyline") {
@@ -196,26 +196,6 @@ const ActionBar = ({ refs, openDialog }: any) => {
 			className="controls z-9000 relative flex justify-center items-center"
 		>
 			
-			{/* <div className="bottom-right-buttons absolute bottom-5 right-1 z-9000 flex flex-col gap-1">
-				<button
-					onClick={handleLocate}
-					disabled={locateDisabled}
-					className="current-loc bg-white/90 p-3 rounded-full cursor-pointer group disabled:opacity-60 disabled:cursor-not-allowed"
-				>
-					{isCurrentLoading ? (
-						<Loader className="animate-spin" />
-					) : (
-						<Locate className="transition-transform duration-300 group-hover:scale-130 active:text-red-700" />
-					)}
-				</button>
-				<button
-					className="bg-white/90 p-3 rounded-full cursor-pointer group disabled:opacity-60 disabled:cursor-not-allowed"
-					onClick={exportFeatureGroup}
-				>
-					<FileText className="transition-transform duration-300 -disabled:group-hover:scale-130 -disabled:active:text-red-700 " />
-				</button>
-			</div> */}
-
 			<div className="absolute top-15 left-1 font-jbm flex flex-col justify-center items-center gap-1">
 				<button
 					className={`bg-white/90 p-2 rounded-md cursor-pointer group flex flex-col justify-center items-center

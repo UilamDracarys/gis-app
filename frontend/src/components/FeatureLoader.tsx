@@ -25,6 +25,7 @@ const FeatureLoader = ({
 
 			if (data) {
 				console.log("Data fetched! Loading...");
+				console.log(data);
 
 				L.geoJSON(data as any, {
 					style: (feature: any) => {
@@ -49,6 +50,28 @@ const FeatureLoader = ({
 						_feature.properties["fill"] = style.fillColor;
 						_feature.properties["fill-opacity"] = style.fillOpacity;
 
+						const measureType = _feature.properties.measure?.type;
+						const measure =
+							measureType == "length"
+								? _feature.properties.measure?.value > 1000
+									? _feature.properties.measure?.value / 1000
+									: _feature.properties.measure?.value
+								: _feature.properties.measure?.value > 10000
+									? _feature.properties.measure?.value / 10000
+									: _feature.properties.measure?.value;
+
+						const measureUnit =
+							measureType == "length"
+								? _feature.properties.measure?.value > 1000
+									? "Km"
+									: "m"
+								: _feature.properties.measure?.value > 10000
+									? "ha"
+									: _feature.properties.measure?.value ===
+										  undefined
+										? ""
+										: "sqm";
+
 						const popupContent = `
 							<div class="feature-popup-content">
 								<div>
@@ -62,6 +85,10 @@ const FeatureLoader = ({
 											<td>${_feature.properties.name}</td>
 										</tr>
 										<tr>
+											<th>Measure</th>
+											<td>${measure?.toFixed(2)} ${measureUnit}</td>
+										</tr>
+										<tr>
 											<th>Notes</th>
 											<td>${_feature.properties.notes}</td>
 										</tr>
@@ -71,7 +98,7 @@ const FeatureLoader = ({
 										</tr>
 										<tr>
 											<th>Created At</th>
-											<td>${_feature.properties.created_at}</td>
+											<td>${new Date(_feature.properties.created_at).toLocaleString()}</td>
 										</tr>
 									</table>
 								</div>
@@ -137,9 +164,9 @@ const FeatureLoader = ({
 			confirmButtonText: "Yes, delete it",
 			cancelButtonText: "Cancel",
 		});
-		
+
 		if (!result.isConfirmed) return;
-		
+
 		setLoading(true);
 		const featureId = feature.id;
 
@@ -154,7 +181,6 @@ const FeatureLoader = ({
 			toast.error(res?.error);
 			console.error("Error deleting feature:", res?.error);
 		}
-
 	};
 
 	return null;

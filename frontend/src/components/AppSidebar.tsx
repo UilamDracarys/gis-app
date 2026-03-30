@@ -52,12 +52,16 @@ export function AppSidebar({ setLoggingOut, handleCollapse }: any) {
 	return (
 		<Sidebar collapsible={isMobile ? "offcanvas" : "icon"}>
 			<SidebarHeader className="group flex flex-row justify-between">
-				<div className="flex items-center gap-2 overflow-hidden">
-					<img src={logo} alt="app logo" className="w-10 shrink-0" />
-					<h2 className="font-bold text-2xl whitespace-nowrap group-data-[collapsed=true]:hidden">
-						SimpleGIS
-					</h2>
-				</div>
+					<div className="flex items-center gap-2 overflow-hidden">
+						<img
+							src={logo}
+							alt="app logo"
+							className="w-10 shrink-0"
+						/>
+						<h2 className="font-bold text-2xl whitespace-nowrap group-data-[collapsed=true]:hidden">
+							SimpleGIS
+						</h2>
+					</div>
 				{isMobile && (
 					<SidebarTrigger
 						onClick={handleCollapse}

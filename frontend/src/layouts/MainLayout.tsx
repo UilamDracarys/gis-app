@@ -33,7 +33,7 @@ function LayoutContent({ loggingOut, handleCollapse }: any) {
 
 	return (
 		<SidebarInset className="z-0">
-			<main className="w-full rounded-l-2xl overflow-hidden relative">
+			<main className="w-full overflow-hidden relative">
 				<SidebarTrigger
 					onClick={handleCollapse}
 					className="absolute top-1 left-1 z-990 bg-white"

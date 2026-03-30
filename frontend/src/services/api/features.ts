@@ -19,7 +19,7 @@ const featuresApi = {
 			if (res.status != 200) {
 				return { success: false };
 			}
-			return { success: true };
+			return { success: true, data: res.data };
 		} catch (error: any) {
 			console.error(error.message);
 		}

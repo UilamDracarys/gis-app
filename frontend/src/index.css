@@ -225,3 +225,7 @@ body {
     @apply font-sans;
   }
 }
+
+@layer components {
+  
+}

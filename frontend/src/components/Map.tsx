@@ -16,10 +16,15 @@ import {Check, Ban } from "lucide-react";
 const { BaseLayer } = LayersControl;
 import ResizeMap from "./ResizeMap";
 import { useSidebar } from "./ui/sidebar";
+import MapEvents from "./MapEvents";
 
 const Map = () => {
 
-	const center: [number, number] = [10.493574598800125, 123.41472829999998];
+	const center: [number, number] = [
+		Number(localStorage.getItem("centerY")) ?? 10.493574598800125, 
+		Number(localStorage.getItem("centerX")) ?? 123.41472829999998
+	];
+	const zoom: number = Number(localStorage.getItem("zoom")) ?? 13;
 	const drawnItemsRef = useRef<L.FeatureGroup | null>(null);
 	const djangoItemsRef = useRef<L.FeatureGroup | null>(null);
 	const { open: isSidebarOpen } = useSidebar();
@@ -52,7 +57,6 @@ const Map = () => {
 		setLoading(true);
 		const geojson = drawnItemsRef.current?.toGeoJSON();
 
-		console.log(drawnItemsRef.current)
 
 		L.geoJSON(geojson, {
 			style: JSON.parse(data.get("style")),
@@ -60,6 +64,7 @@ const Map = () => {
 				return L.circleMarker(latlng, feature.properties?.style || {});
 			},
 			onEachFeature: (_feature, layer) => {
+				
 				djangoItemsRef.current?.addLayer(layer);
 			},
 		});
@@ -71,7 +76,9 @@ const Map = () => {
 		);
 
 		localStorage.setItem("savedStyles", data.get("style"));
-		await featuresApi.saveFeature(data);
+		const res = await featuresApi.saveFeature(data);
+
+		console.log("SAVED", res);
 
 		setLoading(false);
 		setOpen(false);
@@ -131,11 +138,12 @@ const Map = () => {
 		<div className="w-full h-screen relative">
 			<MapContainer
 				center={center}
-				zoom={13}
+				zoom={zoom}
 				zoomControl={false}
 				style={{ height: "100%", width: "100%" }}
 			>
 				<ResizeMap isSidebarOpen={isSidebarOpen} />
+				<MapEvents />
 
 				{loading && (
 					<div className="absolute inset-0 z-9999 flex items-center justify-center bg-black/40">
