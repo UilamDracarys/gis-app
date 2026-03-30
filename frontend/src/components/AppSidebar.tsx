@@ -27,7 +27,7 @@ export function AppSidebar({
 	const navigate = useNavigate();
 	const handleLogout = async () => {
 		setLoggingOut(true);
-		const res = await auth.logout();
+		await auth.logout();
 		navigate("/login");
 		setLoggingOut(false);
 	};
