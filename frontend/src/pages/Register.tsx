@@ -65,8 +65,9 @@ const Register = () => {
 			password,
 		});
 
-		if (res.error) {
+		if (!res.success) {
 			setError(`ERROR: ${res.error}`);
+			setLoading(false);
 			return;
 		}
 

@@ -57,9 +57,16 @@ const auth = {
 			const res = await client.post("/auth/register/", payload);
 			console.log(res);
 			setAccessToken(res.data.access);
-			return res.data;
-		} catch (error: any) {
-			console.error("ERROR REGISTERING:", error.message || error);
+			return {
+				success: true,
+				data: res.data,
+			}
+		} catch (err: any) {
+			return {
+				success: false,
+				error: err.response?.data || { detail: "Something went wrong" },
+				status: err.response?.status,
+			};
 		}
 	},
 	async changePassword(old_password: any, new_password: any) {
