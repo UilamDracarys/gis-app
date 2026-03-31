@@ -26,7 +26,6 @@ import {
 	LogOutIcon,
 	Key,
 	ChevronsUpDown,
-	CircleAlert,
 	AlertTriangle,
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
