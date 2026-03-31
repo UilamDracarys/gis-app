@@ -4,7 +4,8 @@ from .views import (
     CookieTokenRefreshView,
     LogoutView,
     CurrentUserView,
-    RegisterView
+    RegisterView,
+    ChangePasswordView
 )
 
 urlpatterns = [
@@ -13,5 +14,5 @@ urlpatterns = [
     path('logout/', LogoutView.as_view(), name='api_logout'),
     path('user/', CurrentUserView.as_view(), name='current_user'),
     path("register/", RegisterView.as_view(), name="register"),
-
+    path("change-password/", ChangePasswordView.as_view()),
 ]

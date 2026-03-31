@@ -27,7 +27,7 @@ const processQueue = (error: unknown, token: string | null = null) => {
   failedQueue = [];
 };
 
-const PUBLIC_ROUTES = ["/login", "/register"];
+const PUBLIC_ROUTES = ["/login", "/register", "/reset-password"];
 
 // Change access token request
 client.interceptors.request.use((config) => {

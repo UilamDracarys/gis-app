@@ -9,7 +9,24 @@ import {
 	SidebarMenuItem,
 	SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { LogOut, Map, Sheet, Cog } from "lucide-react";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuGroup,
+	DropdownMenuItem,
+	DropdownMenuLabel,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+	Map,
+	Sheet,
+	Cog,
+	LogOutIcon,
+	Key,
+	ChevronsUpDown,
+} from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import auth from "@/services/api/auth";
 import logo from "@/assets/logo.png";
@@ -21,8 +38,16 @@ export function AppSidebar({
 	setLoggingOut,
 	setOpenMobile,
 	handleCollapse,
+	user,
 }: any) {
 	const isMobile = useIsMobile();
+	let avatarFallback = "";
+	if (user.first_name)
+		avatarFallback += user.first_name.charAt(0).toUpperCase();
+	if (user.last_name)
+		avatarFallback += user.last_name.charAt(0).toUpperCase();
+	if (avatarFallback == "")
+		avatarFallback += user.username.charAt(0).toUpperCase();
 
 	const navigate = useNavigate();
 	const handleLogout = async () => {
@@ -95,24 +120,76 @@ export function AppSidebar({
 			<SidebarFooter className="border-t border-gray-300">
 				<SidebarMenu>
 					<SidebarMenuItem>
-						<SidebarMenuButton
-							className="cursor-pointer hover:font-bold"
-							asChild
-						>
-							<Link to="/settings">
-								<Cog className="scale-150" />
-								<h3 className="text-md ms-2">Settings</h3>
-							</Link>
-						</SidebarMenuButton>
-					</SidebarMenuItem>
-					<SidebarMenuItem>
-						<SidebarMenuButton
-							className="cursor-pointer hover:font-bold text-red-600 hover:text-red-600"
-							onClick={handleLogout}
-						>
-							<LogOut className="scale-150" />
-							<h3 className="text-md ms-2">Log Out</h3>
-						</SidebarMenuButton>
+						<DropdownMenu>
+							<DropdownMenuTrigger asChild>
+								<SidebarMenuButton
+									size="lg"
+									className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+								>
+									<Avatar>
+										<AvatarImage src="" />
+										<AvatarFallback>
+											{avatarFallback}
+										</AvatarFallback>
+									</Avatar>
+									<div className="grid flex-1 text-left text-sm leading-tight">
+										<span className="truncate font-medium">
+											{user.username}
+										</span>
+										<span className="truncate text-xs">
+											{user.email}
+										</span>
+									</div>
+									<ChevronsUpDown className="ml-auto size-4" />
+								</SidebarMenuButton>
+							</DropdownMenuTrigger>
+							<DropdownMenuContent
+								className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
+								side={isMobile ? "bottom" : "right"}
+								align="end"
+								sideOffset={4}
+							>
+								<DropdownMenuLabel className="p-0 font-normal">
+									<div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+										<Avatar>
+											<AvatarImage src="" />
+											<AvatarFallback>CN</AvatarFallback>
+										</Avatar>
+										<div className="grid flex-1 text-left text-sm leading-tight">
+											<span className="truncate font-medium">
+												{user.username}
+											</span>
+											<span className="truncate text-xs">
+												{user.email}
+											</span>
+										</div>
+									</div>
+								</DropdownMenuLabel>
+								<DropdownMenuSeparator />
+
+								<DropdownMenuGroup>
+									<Link to="/change-password">
+										<DropdownMenuItem>
+											<Key />
+											Change Password
+										</DropdownMenuItem>
+									</Link>
+								</DropdownMenuGroup>
+								<DropdownMenuGroup>
+									<Link to="/settings">
+										<DropdownMenuItem>
+											<Cog />
+											Settings
+										</DropdownMenuItem>
+									</Link>
+								</DropdownMenuGroup>
+								<DropdownMenuSeparator />
+								<DropdownMenuItem onClick={handleLogout}>
+									<LogOutIcon />
+									Log out
+								</DropdownMenuItem>
+							</DropdownMenuContent>
+						</DropdownMenu>
 					</SidebarMenuItem>
 				</SidebarMenu>
 			</SidebarFooter>

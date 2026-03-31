@@ -7,6 +7,9 @@ import Register from "@/pages/Register";
 import PublicRoute from "./PublicRoute";
 import Features from "@/pages/Features";
 import Settings from "@/pages/Settings";
+import ChangePassword from "@/pages/ChangePassword";
+import ResetPassword from "@/pages/ResetPassword";
+import { ToastContainer } from "react-toastify";
 
 export const routes = createRoutesFromElements(
 	<>
@@ -23,6 +26,11 @@ export const routes = createRoutesFromElements(
 					<Register />
 				</PublicRoute>
 			} />
+		<Route path="/reset-password" element={
+				<PublicRoute>
+					<ResetPassword />
+				</PublicRoute>
+			} />
 		<Route
 			path="/"
 			element={
@@ -34,6 +42,9 @@ export const routes = createRoutesFromElements(
 			<Route index element={<Home />} />
 			<Route path="/features" element={<Features />} />
 			<Route path="/settings" element={<Settings />} />
+			<Route path="/change-password" element={<ChangePassword />} />
 		</Route>
+
+
 	</>
 );

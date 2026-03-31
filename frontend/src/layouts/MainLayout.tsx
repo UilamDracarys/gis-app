@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { useEffect, useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const MainLayout = () => {
 	const [loggingOut, setLoggingOut] = useState(false);
@@ -23,6 +24,8 @@ const MainLayout = () => {
 
 function LayoutContent({ loggingOut, setLoggingOut }: any) {
 	const { open, setOpen, setOpenMobile } = useSidebar();
+	const {user} = useAuth();
+
 
 	useEffect(() => {
 		const sidebarStatus = localStorage.getItem("sidebarOpen");
@@ -35,7 +38,7 @@ function LayoutContent({ loggingOut, setLoggingOut }: any) {
 
 	return (
 		<>
-			<AppSidebar setLoggingOut={setLoggingOut} setOpenMobile={setOpenMobile} handleCollapse={handleCollapse}/>
+			<AppSidebar user={user} setLoggingOut={setLoggingOut} setOpenMobile={setOpenMobile} handleCollapse={handleCollapse}/>
 			<SidebarInset className="z-0">
 				<main className="w-full overflow-hidden relative">
 					<SidebarTrigger className="absolute top-1 left-1 z-990 bg-white" onClick={handleCollapse}/>

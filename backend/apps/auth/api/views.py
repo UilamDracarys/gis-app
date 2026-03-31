@@ -5,7 +5,8 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import status
 from django.conf import settings
-from .serializers import RegisterSerializer
+from .serializers import RegisterSerializer, ChangePasswordSerializer
+
 
 class CurrentUserView(APIView):
     permission_classes = [IsAuthenticated]
@@ -142,5 +143,30 @@ class RegisterView(APIView):
             )
 
             return response
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+class ChangePasswordView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        serializer = ChangePasswordSerializer(data=request.data)
+
+        if serializer.is_valid():
+            user = request.user
+
+            # check old password
+            if not user.check_password(serializer.validated_data["old_password"]):
+                return Response(
+                    {"old_password": ["Wrong password."]},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            # set new password
+            user.set_password(serializer.validated_data["new_password"])
+            user.save()
+
+            return Response({"detail": "Password updated successfully"})
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

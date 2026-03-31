@@ -80,7 +80,7 @@ const Login = () => {
 								<Input
 									id="password"
 									type="password"
-									className="bg-white mb-5 h-10"
+									className="bg-white h-10"
 									placeholder="Enter your password..."
 									value={password}
 									onChange={(e) =>
@@ -91,12 +91,20 @@ const Login = () => {
 							</Field>
 						</FieldGroup>
 
+						<div className="flex flex-row justify-end items-center w-full">
+							<Link
+								to="/reset-password"
+								className="mt-2 hover:text-red-400"
+							>
+								Forgot Password?
+							</Link>
+						</div>
+
 						{error && (
 							<p className="text-red-500 text-sm mb-2">{error}</p>
 						)}
-
 						<button
-							className="bg-black  hover:bg-white hover:text-black hover:border hover:border-black active:bg-black/30 active:text-white active:border-none w-full rounded-md text-white font-bold h-10 cursor-pointer  transition-all duration-300 ease flex justify-center items-center gap-2
+							className="mt-5 bg-black  hover:bg-white hover:text-black hover:border hover:border-black active:bg-black/30 active:text-white active:border-none w-full rounded-md text-white font-bold h-10 cursor-pointer  transition-all duration-300 ease flex justify-center items-center gap-2
 						disabled:bg-gray-300
 						disabled:hover:bg-gray-300
 						disabled:hover:text-white
