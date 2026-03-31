@@ -1,7 +1,5 @@
-import ChangePassword from "@/pages/ChangePassword";
 import client, { setAccessToken } from "./client";
 import type { User, AuthResponse } from "@/types/auth";
-import { useNavigate } from "react-router-dom";
 
 const auth = {
 	async getUser(): Promise<User | null> {

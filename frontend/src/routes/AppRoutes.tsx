@@ -9,7 +9,6 @@ import Features from "@/pages/Features";
 import Settings from "@/pages/Settings";
 import ChangePassword from "@/pages/ChangePassword";
 import ResetPassword from "@/pages/ResetPassword";
-import { ToastContainer } from "react-toastify";
 
 export const routes = createRoutesFromElements(
 	<>
