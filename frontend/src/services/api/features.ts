@@ -44,6 +44,7 @@ const featuresApi = {
 			const res = await client.patch(`/features/${id}/`, {
 				name: data.get("name"),
 				notes: data.get("notes"),
+				visibility: data.get("visibility"),
 				style: JSON.parse(data.get("style")),
 			})
 

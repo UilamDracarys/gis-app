@@ -62,10 +62,8 @@ const Map = () => {
 	};
 
 	const handleSave = async (data: any) => {
-		console.log(Object.fromEntries(data));
+		console.log("TOSAVE", Object.fromEntries(data));
 		setLoading(true);
-
-
 
 		if (data.get("id") !== null && data.get("id") !== "") {
 			if (!editingLayerRef.current) return;
@@ -77,7 +75,6 @@ const Map = () => {
 				data.get("id"),
 				data,
 			);
-
 
 			console.log("UPDATED", res?.data);
 		} else {
