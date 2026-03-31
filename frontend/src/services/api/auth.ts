@@ -5,7 +5,6 @@ const auth = {
 	async getUser(): Promise<User | null> {
 		try {
 			const res = await client.get<User>("/auth/user/");
-			console.log("USER", res.data);
 			return res.data;
 		} catch(error: any) {
 			console.error("GET USER ERROR:", error.response || error);

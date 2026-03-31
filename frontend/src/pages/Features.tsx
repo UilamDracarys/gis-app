@@ -58,6 +58,7 @@ const Features = () => {
 						{features.map((feature: any, index) => {
 							const measureType =
 								feature.properties.measure?.type;
+
 							const measure =
 								measureType == "length"
 									? feature.properties.measure?.value > 1000

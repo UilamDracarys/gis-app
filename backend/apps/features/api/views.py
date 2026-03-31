@@ -4,6 +4,10 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from ..models import Feature
 from .serializers import FeatureSerializer
+from django.contrib.gis.db.models.functions import Area, Length
+from django.db.models import FloatField, ExpressionWrapper
+from django.db.models.functions import Cast
+from django.contrib.gis.db.models import GeometryField
 import json
 
 class FeatureViewSet(viewsets.ModelViewSet):
@@ -11,10 +15,18 @@ class FeatureViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        if (self.request.user.is_superuser):
-            return Feature.objects.all()
+        if self.request.user.is_superuser:
+            qs = Feature.objects.all()
         else:
-            return Feature.objects.filter(created_by=self.request.user)
+            qs = Feature.objects.filter(created_by=self.request.user)
+
+        return qs.annotate(
+            area=ExpressionWrapper(
+                Area(Cast("geom", GeometryField(geography=True))),
+                output_field=FloatField(),
+            ),
+            length=Length("geom", geography=True),
+        )
 
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user)
@@ -40,4 +52,6 @@ class FeatureViewSet(viewsets.ModelViewSet):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         self.perform_create(serializer)
-        return Response(serializer.data)
+
+        annotated = self.get_queryset().get(pk=serializer.instance.pk)
+        return Response(self.get_serializer(annotated).data)

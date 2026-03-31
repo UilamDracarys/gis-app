@@ -12,11 +12,13 @@ import L from "leaflet";
 import "leaflet-draw";
 import { toast } from "react-toastify";
 import featuresApi from "@/services/api/features";
-import { Check, Ban } from "lucide-react";
+import { Check, Ban, X } from "lucide-react";
 const { BaseLayer } = LayersControl;
 import ResizeMap from "./ResizeMap";
 import { useSidebar } from "./ui/sidebar";
 import MapEvents from "./MapEvents";
+import { Input } from "./ui/input";
+import MapController from "./MapController";
 
 const Map = () => {
 	const center: [number, number] = [
@@ -37,10 +39,15 @@ const Map = () => {
 	};
 
 	const editingLayerRef = useRef<any>(null);
+	const [map, setMap] = useState<L.Map | null>(null);
 
 	const defaultBase = localStorage.getItem("basemap") || "Dark";
 
 	const [open, setOpen] = useState(false);
+	const [features, setFeatures] = useState([]);
+	const [searchKeyword, setSearchKeyword] = useState("");
+	const [searchResults, setSearchResults] = useState([]);
+	const [showResults, setShowResults] = useState(false);
 	const [editingFeature, setEditingFeature] = useState<any>(null);
 
 	const openDialog = (featureData?: any) => {
@@ -59,13 +66,11 @@ const Map = () => {
 		setLoading(true);
 
 		if (data.get("id") !== null && data.get("id") !== "") {
-			if (!editingLayerRef.current) return;
-
-			const layer = editingLayerRef.current;
-			layer.setStyle(JSON.parse(data.get("style")));
-
-			const res = await featuresApi.updateAttributes(data.get("id"), data);
-			console.log("UPDATED", res?.data)
+			const res = await featuresApi.updateAttributes(
+				data.get("id"),
+				data,
+			);
+			console.log("UPDATED", res?.data);
 		} else {
 			const geojson = drawnItemsRef.current?.toGeoJSON();
 
@@ -101,10 +106,12 @@ const Map = () => {
 
 	const handleCancelEdits = () => {
 		if (!editingLayerRef.current) return;
-
 		const layer = editingLayerRef.current as any;
 
+		console.log("LAYER", layer);
+
 		const original = layer._originalGeoJSON;
+		console.log("original", original);
 
 		console.log(original.geometry.coordinates);
 
@@ -148,6 +155,40 @@ const Map = () => {
 		edited.editing.disable();
 	};
 
+	const handleSearch = (keyword: string) => {
+		let results: any = [];
+
+		setShowResults(true);
+
+		if (keyword.length > 0) {
+			setSearchKeyword(keyword);
+			results = features.filter((feature: any) =>
+				feature.searchString.toLowerCase().includes(keyword),
+			);
+		} else {
+			setSearchKeyword("");
+		}
+		setSearchResults(results);
+	};
+
+	const handleSearchClick = (id: number) => {
+		let foundLayer: any = null;
+		console.log(typeof id);
+
+		djangoItemsRef.current?.eachLayer((layer: any) => {
+			if (layer.feature?.id === id) {
+				foundLayer = layer;
+				if (foundLayer.feature.geometry.type !== "Point") {
+					map?.fitBounds(foundLayer.getBounds());
+				} else {
+					map?.setView(foundLayer.getLatLng(), 16);
+				}
+			}
+		});
+
+		setShowResults(false);
+	};
+
 	return (
 		<div className="w-full h-screen relative">
 			<MapContainer
@@ -156,6 +197,64 @@ const Map = () => {
 				zoomControl={false}
 				style={{ height: "100%", width: "100%" }}
 			>
+				<MapController setMap={setMap} />
+				<div className="absolute top-2 left-1/2 -translate-x-1/2 sm:w-100 w-65 z-999 flex flex-col">
+					<div className="input relative">
+						{searchKeyword !== "" && (
+							<button
+								className="absolute right-2 top-1/2 -translate-y-1/2"
+								onClick={() => {
+									setSearchKeyword("");
+									setSearchResults([]);
+								}}
+							>
+								<X size={16} />
+							</button>
+						)}
+						<Input
+							type="text"
+							placeholder="Search..."
+							className="rounded-full bg-white "
+							value={searchKeyword}
+							onChange={(e) => handleSearch(e.target.value)}
+						/>
+					</div>
+
+					{searchKeyword !== "" &&
+						(searchResults.length > 0 ? (
+							<div
+								className=" bg-white mt-1 max-h-75 overflow-auto rounded-md"
+								hidden={!showResults}
+							>
+								<ul>
+									{searchResults.map((item: any) => (
+										<li
+											key={item.id}
+											className="px-3 py-4 hover:bg-gray-200 cursor-pointer border-b border-gray-300"
+											onClick={() =>
+												handleSearchClick(item.id)
+											}
+										>
+											<span className="text-lg font-bold">
+												{item.name}
+											</span>{" "}
+											<span>({item.type})</span>
+											<br />
+											<span className="text-sm text-gray-500 italic">
+												{item.notes}
+											</span>
+										</li>
+									))}
+								</ul>
+							</div>
+						) : (
+							<div className="bg-white p-5 mt-1 rounded-md">
+								<span className="text-red-400">
+									'{searchKeyword}' not found.
+								</span>
+							</div>
+						))}
+				</div>
 				<ResizeMap isSidebarOpen={isSidebarOpen} />
 				<MapEvents />
 
@@ -166,6 +265,7 @@ const Map = () => {
 				)}
 
 				<FeatureLoader
+					setFeatures={setFeatures}
 					setLoading={setLoading}
 					djangoItemsRef={djangoItemsRef}
 					editingLayerRef={editingLayerRef}
@@ -176,14 +276,14 @@ const Map = () => {
 				{editingLayer && (
 					<div className="absolute right-2 top-16 z-9999 flex flex-col gap-1">
 						<button
-							className=" bg-green-200/90 p-3 rounded-full cursor-pointer group disabled:opacity-60 disabled:cursor-not-allowed"
+							className=" bg-green-200/90 p-2 rounded-md cursor-pointer group disabled:opacity-60 disabled:cursor-not-allowed"
 							onClick={handleSaveEdits}
 						>
 							<Check className="transition-transform duration-300 group-hover:scale-130 -disabled:active:text-red-700 " />
 						</button>
 
 						<button
-							className=" bg-red-200/90 p-3 rounded-full cursor-pointer group disabled:opacity-60 disabled:cursor-not-allowed"
+							className=" bg-red-200/90 p-2 rounded-md cursor-pointer group disabled:opacity-60 disabled:cursor-not-allowed"
 							onClick={handleCancelEdits}
 						>
 							<Ban className="transition-transform duration-300 group-hover:scale-130 -disabled:active:text-red-700 " />
@@ -237,6 +337,8 @@ const Map = () => {
 					refs={refs}
 					openDialog={openDialog}
 					editingLayer={editingLayer}
+					editingLayerRef={editingLayerRef}
+					setEditingLayer={setEditingLayer}
 				/>
 			</MapContainer>
 			<FeatureDialog

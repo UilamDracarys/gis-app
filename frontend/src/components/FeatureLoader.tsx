@@ -4,8 +4,10 @@ import { useEffect, useRef } from "react";
 import L from "leaflet";
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
+import { useAuth } from "@/contexts/AuthContext";
 
 const FeatureLoader = ({
+	setFeatures,
 	djangoItemsRef,
 	editingLayerRef,
 	setEditingLayer,
@@ -14,19 +16,22 @@ const FeatureLoader = ({
 }: any) => {
 	const map = useMap();
 	const hasLoaded = useRef(false);
+	const { user } = useAuth();
+	const username = user?.username;
 
 	useEffect(() => {
 		if (!map || !djangoItemsRef.current) return;
 		if (hasLoaded.current) return; // prevent multiple loads
 		hasLoaded.current = true;
+		const features: any = [];
 
 		const loadFeatures = async () => {
 			setLoading(true);
 			const data = await featuresApi.fetchAll();
+			console.log(data)
 
 			if (data) {
 				console.log("Data fetched! Loading...");
-
 				L.geoJSON(data as any, {
 					style: (feature: any) => {
 						return feature.properties?.style || {};
@@ -77,7 +82,17 @@ const FeatureLoader = ({
 							name: _feature.properties.name,
 							notes: _feature.properties.notes,
 							style: _feature.properties.style,
+						};
+						
+						const searchData = {
+							id: _feature.id,
+							name: _feature.properties.name,
+							notes: _feature.properties.notes,
+							type: _feature.geometry.type,
+							searchString: _feature.id + _feature.properties.name + _feature.properties.notes,
 						}
+
+						features.push(searchData);
 
 						const popupContent = `
 							<div class="feature-popup-content">
@@ -97,11 +112,11 @@ const FeatureLoader = ({
 										</tr>
 										<tr>
 											<th>Notes</th>
-											<td>${featureData.notes}</td>
+											<td>${featureData.notes.length > 30 ? featureData.notes.slice(0,30).concat("..."): featureData.notes}</td>
 										</tr>
 										<tr>
 											<th>Created By</th>
-											<td>${_feature.properties.created_by}</td>
+											<td>${_feature.properties.created_by === username ? "You" : _feature.properties.created_by}</td>
 										</tr>
 										<tr>
 											<th>Created At</th>
@@ -129,16 +144,15 @@ const FeatureLoader = ({
 							const popupEl = layer.getPopup()?.getElement();
 							if (!popupEl) return;
 
-
-							const editAttBtn = popupEl.querySelector(".edit-att");
+							const editAttBtn =
+								popupEl.querySelector(".edit-att");
 							editAttBtn?.addEventListener("click", () => {
-
 								const editable = layer as any;
-								
+
 								editingLayerRef.current = editable;
 								openDialog(featureData);
 								layer.closePopup();
-							})
+							});
 
 							const deleteBtn = popupEl.querySelector(".delete");
 							deleteBtn?.addEventListener("click", () => {
@@ -160,18 +174,6 @@ const FeatureLoader = ({
 									editingLayerRef.current.editing?.disable();
 								}
 
-								const vertexIcon = new L.DivIcon({
-									className: "",
-									iconSize: [20, 20],
-									iconAnchor: [10, 10],
-									html: '<div style="width:20px;height:20px;border-radius:50%;background:#3b82f6;border:2px solid white;box-shadow:0 1px 3px rgba(0,0,0,0.4)"></div>',
-								});
-
-								if (editable.editing?.options) {
-									editable.editing.options.icon = vertexIcon;
-									editable.editing.options.touchIcon = vertexIcon;
-								}
-
 								editable.editing?.enable();
 
 								editingLayerRef.current = editable;
@@ -179,7 +181,6 @@ const FeatureLoader = ({
 
 								layer.closePopup();
 							});
-
 						});
 
 						djangoItemsRef.current?.addLayer(layer);
@@ -189,7 +190,7 @@ const FeatureLoader = ({
 
 			setLoading(false);
 		};
-
+		setFeatures(features);
 		loadFeatures();
 	}, [djangoItemsRef]);
 
@@ -198,6 +199,16 @@ const FeatureLoader = ({
 			title: "Delete feature?",
 			text: "This action cannot be undone.",
 			icon: "warning",
+			customClass: {
+				popup: "!rounded-2xl !p-6 !w-auto",
+				title: "!text-2xl !font-bold",
+				confirmButton:
+					"cursor-pointer bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded",
+				actions: "gap-2",
+				cancelButton:
+					"cursor-pointer bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded",
+			},
+			buttonsStyling: false,
 			showCancelButton: true,
 			confirmButtonText: "Yes, delete it",
 			cancelButtonText: "Cancel",

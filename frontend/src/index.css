@@ -68,39 +68,30 @@ body {
   cursor: pointer;
 }
 
+.leaflet-popup-content {
+  padding: 0.5rem 0.2rem;
+}
+
 .popup-content-table {
-  border: 2px solid black;
+  border: 1px solid gray;
   border-collapse: collapse;
 }
 
 .popup-content-table th,
 .popup-content-table td {
+  
   padding: 0.5rem;
-  border: 1px solid gray;
 }
 
-
-.blink-marker {
-  width: 25px;
-  height: 25px;
-  background: #3b82f6;
-  border-radius: 50%;
-  border: 3px solid white;
-  box-shadow: 0 0 0 rgba(59,130,246, 0.7);
-  animation: pulse 1.5s infinite;
+.popup-content-table td {
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
-@keyframes pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(59,130,246, 0.7);
-  }
-  70% {
-    box-shadow: 0 0 0 18px rgba(59,130,246, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(59,130,246, 0);
-  }
+.popup-content-table tr:nth-child(odd){
+  background-color: rgb(192, 192, 192);
 }
+
 
 .dark {
   --background: oklch(0.145 0 0);

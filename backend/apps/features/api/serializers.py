@@ -13,25 +13,22 @@ class FeatureSerializer(GeoFeatureModelSerializer):
         geo_field = "geom"  # your PointField
         fields = "__all__"
         read_only_fields = ["created_by", "created_at"]
+        
 
     def get_measure(self, obj):
         if not obj.geom:
             return None
 
-        geom = obj.geom
-
-        # projected = geom.transform(4326, clone=True)
-
-        if geom.geom_type in ["Polygon", "MultiPolygon"]:
+        if obj.geom.geom_type in ["Polygon", "MultiPolygon"]:
             return {
                 "type": "area",
-                "value": geom.transform(3857, clone=True).area  # m²
+                "value": obj.area  # hectares
             }
 
-        elif geom.geom_type in ["LineString", "MultiLineString"]:
+        elif obj.geom.geom_type in ["LineString", "MultiLineString"]:
             return {
                 "type": "length",
-                "value": geom.transform(32651, clone=True).length # meters
+                "value": obj.length.m  # meters
             }
 
         return None
