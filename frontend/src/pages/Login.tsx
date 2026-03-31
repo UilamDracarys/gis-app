@@ -7,12 +7,14 @@ import { Label } from "@/components/ui/label";
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Link } from "react-router-dom";
 import { Loader } from "lucide-react";
+import { MESSAGES } from "@/constants/messages";
 
 const Login = () => {
 	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
 	const [error, setError] = useState<string | null>(null);
 	const [loading, setLoading] = useState(false);
+	const warnings = MESSAGES.WARNINGS;
 
 	const navigate = useNavigate();
 	const { setUser } = useAuth();
@@ -139,6 +141,16 @@ const Login = () => {
 						>
 							Register
 						</Link>
+
+						{warnings.length > 0 && (
+							
+								<div className="rounded-md border border-yellow-800 bg-yellow-100 px-3 py-2 mt-8">
+									<span className="text-yellow-800 font-bold">IMPORTANT: </span>{warnings.map((msg)=> (
+										<span className="text-yellow-800 text-sm">{msg}</span>
+									))}
+								</div>
+							
+						)}
 					</form>
 				</div>
 			</div>

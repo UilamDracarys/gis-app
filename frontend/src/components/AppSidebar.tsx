@@ -26,6 +26,8 @@ import {
 	LogOutIcon,
 	Key,
 	ChevronsUpDown,
+	CircleAlert,
+	AlertTriangle,
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import auth from "@/services/api/auth";
@@ -33,6 +35,7 @@ import logo from "@/assets/logo.png";
 import { useEffect } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Link } from "react-router-dom";
+import { MESSAGES } from "@/constants/messages";
 
 export function AppSidebar({
 	setLoggingOut,
@@ -41,6 +44,7 @@ export function AppSidebar({
 	user,
 }: any) {
 	const isMobile = useIsMobile();
+	const warnings = MESSAGES.WARNINGS;
 	let avatarFallback = "";
 	if (user.first_name)
 		avatarFallback += user.first_name.charAt(0).toUpperCase();
@@ -117,7 +121,29 @@ export function AppSidebar({
 					</SidebarMenu>
 				</SidebarGroup>
 			</SidebarContent>
-			<SidebarFooter className="border-t border-gray-300">
+			<SidebarFooter className="border-t border-gray-300 ">
+				{warnings.length > 0 && (
+					<SidebarGroup className="warnings p-0">
+						<SidebarMenu>
+							<SidebarMenuItem>
+								<SidebarMenuButton
+									className="p-0 h-auto hover:bg-yellow-100"
+									asChild
+								>
+									<div className="flex rounded-md bg-yellow-100 border border-yellow-800 p-3">
+										<AlertTriangle className="text-yellow-800" />
+										{warnings.map((msg) => (
+											<div className="text-yellow-800 break-words text-sm leading-snug">
+												{msg}
+											</div>
+										))}
+									</div>
+								</SidebarMenuButton>
+							</SidebarMenuItem>
+						</SidebarMenu>
+					</SidebarGroup>
+				)}
+
 				<SidebarMenu>
 					<SidebarMenuItem>
 						<DropdownMenu>
@@ -154,8 +180,8 @@ export function AppSidebar({
 										<Avatar>
 											<AvatarImage src="" />
 											<AvatarFallback>
-											{avatarFallback}
-										</AvatarFallback>
+												{avatarFallback}
+											</AvatarFallback>
 										</Avatar>
 										<div className="grid flex-1 text-left text-sm leading-tight">
 											<span className="truncate font-medium">
