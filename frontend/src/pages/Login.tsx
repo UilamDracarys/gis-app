@@ -26,6 +26,7 @@ const Login = () => {
 		const res = await auth.login(username, password);
 		if (res.error) {
 			setError(res.error);
+			setLoading(false);
 			return;
 		}
 

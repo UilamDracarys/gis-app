@@ -65,11 +65,20 @@ const Map = () => {
 		console.log(Object.fromEntries(data));
 		setLoading(true);
 
+
+
 		if (data.get("id") !== null && data.get("id") !== "") {
+			if (!editingLayerRef.current) return;
+
+			const layer = editingLayerRef.current;
+			layer.setStyle(JSON.parse(data.get("style")));
+			
 			const res = await featuresApi.updateAttributes(
 				data.get("id"),
 				data,
 			);
+
+
 			console.log("UPDATED", res?.data);
 		} else {
 			const geojson = drawnItemsRef.current?.toGeoJSON();

@@ -24,7 +24,6 @@ const auth = {
 
 			setAccessToken(res.data.access)
 			
-			
 			console.log("AUTH TS RES", res)
 			if (res.status == 200) {
 				return { success: true };
@@ -33,6 +32,7 @@ const auth = {
 				return { error: res.statusText };
 			}
 		} catch (error: any) {
+			console.log("ERROR", error)
 			return {
 				error:
 					error.response?.data?.detail ||

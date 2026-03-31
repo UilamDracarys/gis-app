@@ -8,6 +8,14 @@ import {
 	DialogTitle,
 	DialogOverlay,
 } from "@/components/ui/dialog";
+import {
+	Select,
+	SelectContent,
+	SelectGroup,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
 import { Switch } from "./ui/switch";
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
@@ -15,6 +23,7 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "./ui/slider";
 import { Textarea } from "./ui/textarea";
 import { useState, useEffect } from "react";
+import { Globe, Lock } from "lucide-react";
 
 type Props = {
 	open: boolean;
@@ -35,10 +44,15 @@ const FeatureDialog = ({
 
 	const styles: any = savedStyles ? JSON.parse(savedStyles) : defaultStyles;
 
+	const visibilityOptions: any = [
+		{ label: "Only Me", value: "only-me", icon: <Lock /> },
+		{ label: "Public", value: "public", icon: <Globe /> },
+	];
 
 	const [id, setId] = useState(null);
 	const [name, setName] = useState("");
 	const [notes, setNotes] = useState("");
+	const [visibility, setVisibility] = useState("only-me");
 	const [outlineColor, setOutlineColor] = useState(styles.color);
 	const [outlineWidth, setOutlineWidth] = useState([styles.weight]);
 	const [fillColor, setFillColor] = useState(styles.fillColor);
@@ -74,16 +88,19 @@ const FeatureDialog = ({
 		localStorage.setItem("useCustom", !isCustom as any);
 	};
 
-
 	useEffect(() => {
 		if (open && featureData) {
+			console.log("Feature Data", featureData)
 			setId(featureData.id || null);
 			setName(featureData.name || "");
 			setNotes(featureData.notes || "");
-			setOutlineColor(featureData.style?.color || styles.color)
-			setOutlineWidth([featureData.style?.weight || styles.weight]); 
+			setVisibility(featureData.visibility || "only-me");
+			setOutlineColor(featureData.style?.color || styles.color);
+			setOutlineWidth([featureData.style?.weight || styles.weight]);
 			setFillColor(featureData.style?.fillColor || styles.fillColor);
-			setFillOpacity([featureData.style?.fillOpacity || styles.fillOpacity]);
+			setFillOpacity([
+				featureData.style?.fillOpacity || styles.fillOpacity,
+			]);
 		}
 	}, [open, featureData]);
 
@@ -92,12 +109,13 @@ const FeatureDialog = ({
 			setId(null);
 			setName("");
 			setNotes("");
+			setVisibility("only-me");
 			setOutlineColor(styles.color);
 			setOutlineWidth([styles.weight]);
 			setFillColor(styles.fillColor);
 			setFillOpacity([styles.fillOpacity]);
 		}
-	}, [open])
+	}, [open]);
 
 	return (
 		<Dialog
@@ -123,7 +141,11 @@ const FeatureDialog = ({
 						</DialogDescription>
 					</DialogHeader>
 					<FieldGroup className="mt-5">
-						<input type="hidden" name="id" value={id || undefined}/>
+						<input
+							type="hidden"
+							name="id"
+							value={id || undefined}
+						/>
 						<Field>
 							<Label htmlFor="name">Name</Label>
 							<Input
@@ -136,8 +158,30 @@ const FeatureDialog = ({
 
 						<Field>
 							<Label htmlFor="username">Notes</Label>
-							<Textarea id="notes" name="notes" defaultValue={notes}/>
+							<Textarea
+								id="notes"
+								name="notes"
+								defaultValue={notes}
+							/>
 						</Field>
+
+							<Select name="visibility" defaultValue={visibility}>
+								<SelectTrigger className="w-full">
+									<SelectValue placeholder="Visibility" />
+								</SelectTrigger>
+								<SelectContent className="z-9999">
+									<SelectGroup>
+										{visibilityOptions.map((item: any) => (
+											<SelectItem
+												key={item.value}
+												value={item.value}
+											>
+												{item.icon} {item.label}
+											</SelectItem>
+										))}
+									</SelectGroup>
+								</SelectContent>
+							</Select>
 
 						<div className="flex items-center space-x-2 mb-3">
 							<Switch

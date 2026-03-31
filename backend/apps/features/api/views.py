@@ -8,6 +8,7 @@ from django.contrib.gis.db.models.functions import Area, Length
 from django.db.models import FloatField, ExpressionWrapper
 from django.db.models.functions import Cast
 from django.contrib.gis.db.models import GeometryField
+from django.db.models import Q
 import json
 
 class FeatureViewSet(viewsets.ModelViewSet):
@@ -18,7 +19,9 @@ class FeatureViewSet(viewsets.ModelViewSet):
         if self.request.user.is_superuser:
             qs = Feature.objects.all()
         else:
-            qs = Feature.objects.filter(created_by=self.request.user)
+            qs = Feature.objects.filter(
+                Q(created_by=self.request.user) | Q(visibility='public')
+            )
 
         return qs.annotate(
             area=ExpressionWrapper(

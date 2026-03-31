@@ -9,6 +9,7 @@ class Feature(models.Model):
     geom = models.GeometryField(srid=4326)
     style = models.JSONField(default=dict, blank=True)
     notes = models.TextField(max_length=500, blank=True, null=True)
+    visibility = models.CharField(max_length=10, choices=(("only-me", "Only Me"), ("public", "Public"),), default="only-me")
     created_by = models.ForeignKey(
         User,
         on_delete=models.PROTECT,
