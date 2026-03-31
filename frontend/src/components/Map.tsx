@@ -163,11 +163,14 @@ const Map = () => {
 		if (keyword.length > 0) {
 			setSearchKeyword(keyword);
 			results = features.filter((feature: any) =>
-				feature.searchString.toLowerCase().includes(keyword),
+				feature.searchString.toLowerCase().includes(keyword.toLowerCase()),
 			);
 		} else {
 			setSearchKeyword("");
 		}
+
+		console.log(features);
+		console.log(results);
 		setSearchResults(results);
 	};
 
