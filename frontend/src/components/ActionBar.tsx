@@ -261,7 +261,7 @@ const ActionBar = ({ refs, openDialog }: any) => {
 					className="bg-white/90 p-2 rounded-md cursor-pointer group disabled:opacity-60 disabled:cursor-not-allowed"
 					onClick={exportFeatureGroup}
 				>
-					<FileText className="transition-transform duration-300 -disabled:group-hover:scale-130 -disabled:active:text-red-700 " />
+					<FileText className="transition-transform duration-300  group-hover:scale-130 " />
 				</button>
 			</div>
 		</div>
