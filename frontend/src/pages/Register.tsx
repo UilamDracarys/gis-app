@@ -5,6 +5,7 @@ import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import auth from "@/services/api/auth";
 import { useAuth } from "@/contexts/AuthContext";
+import { Loader } from "lucide-react";
 
 const Register = () => {
 	const [firstName, setFirstName] = useState("");
@@ -14,6 +15,7 @@ const Register = () => {
 	const [password, setPassword] = useState("");
 	const [confirmPassword, setConfirmPassword] = useState("");
 	const [error, setError] = useState<string | null>(null);
+	const [loading, setLoading] = useState(false);
 
 	const navigate = useNavigate();
 	const { setUser } = useAuth();
@@ -41,14 +43,17 @@ const Register = () => {
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 		setError(null);
+		setLoading(true);
 		if (password !== confirmPassword) {
 			setError("Passwords don't match");
+			setLoading(false);
 			return;
 		}
 
 		const passwordError = validatePassword();
 		if (passwordError) {
 			setError(passwordError);
+			setLoading(false);
 			return;
 		}
 
@@ -71,6 +76,7 @@ const Register = () => {
 			setUser(user);
 			navigate("/");
 		}
+		setLoading(false);
 	};
 
 	return (
@@ -180,8 +186,25 @@ const Register = () => {
 							<p className="text-red-500 text-sm mb-2">{error}</p>
 						)}
 
-						<button className="bg-black  hover:bg-white hover:text-black hover:border hover:border-black active:bg-black/30 active:text-white active:border-none w-full rounded-md text-white font-bold h-10 cursor-pointer  transition-all duration-300 ease">
-							Register
+						<button
+							className="mt-5 bg-black  hover:bg-white hover:text-black hover:border hover:border-black active:bg-black/30 active:text-white active:border-none w-full rounded-md text-white font-bold h-10 cursor-pointer  transition-all duration-300 ease flex justify-center items-center gap-2
+						disabled:bg-gray-300
+						disabled:hover:bg-gray-300
+						disabled:hover:text-white
+						disabled:hover:border-none
+						disabled:cursor-not-allowed
+						
+						"
+							disabled={loading}
+						>
+							{loading ? (
+								<>
+									Registering ...{" "}
+									<Loader className="animate-spin" />
+								</>
+							) : (
+								"Register"
+							)}
 						</button>
 
 						<div className="flex items-center my-4">
