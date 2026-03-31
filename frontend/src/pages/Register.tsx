@@ -14,11 +14,14 @@ const Register = () => {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [confirmPassword, setConfirmPassword] = useState("");
-	const [error, setError] = useState<string | null>(null);
 	const [loading, setLoading] = useState(false);
 
 	const navigate = useNavigate();
 	const { setUser } = useAuth();
+
+	const [error, setError] = useState<string | null>(null);
+	const [usernameError, setUsernameError] = useState<string | null>(null);
+	const [emailError, setEmailError] = useState<string | null>(null);
 
 	const validatePassword = () => {
 		if (password.length < 8) {
@@ -66,7 +69,19 @@ const Register = () => {
 		});
 
 		if (!res.success) {
-			setError(`ERROR: ${res.error}`);
+			console.log(res.error);
+
+			if (res.error.username) {
+				setUsernameError(res.error.username);
+			} else {
+				setUsernameError(null);
+			}
+
+			if (res.error.email) {
+				setEmailError(res.error.email);
+			} else {
+				setEmailError(null);
+			}
 			setLoading(false);
 			return;
 		}
@@ -136,6 +151,11 @@ const Register = () => {
 										setUsername(e.target.value)
 									}
 								></Input>
+								{usernameError && (
+									<p className="text-red-500 text-sm mb-2">
+										{usernameError}
+									</p>
+								)}
 							</Field>
 							<Field>
 								<Label htmlFor="email">Email</Label>
@@ -148,6 +168,11 @@ const Register = () => {
 									value={email}
 									onChange={(e) => setEmail(e.target.value)}
 								></Input>
+								{emailError && (
+									<p className="text-red-500 text-sm mb-2">
+										{emailError}
+									</p>
+								)}
 							</Field>
 
 							<Field>
