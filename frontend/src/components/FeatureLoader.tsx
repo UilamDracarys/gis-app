@@ -129,40 +129,40 @@ const FeatureLoader = ({
 							</div>
 						`;
 
-						const popupContent = `
-							<div class="feature-popup-content">
-								<div>
-									<table class="popup-content-table">
-										<tr>
-											<th>ID</th>
-											<td>${featureData.id}</td>
-										</tr>
-										<tr>
-											<th>Name</th>
-											<td>${featureData.name}</td>
-										</tr>
-										<tr>
-											<th>Measure</th>
-											<td>${measure?.toFixed(2)} ${measureUnit}</td>
-										</tr>
-										<tr>
-											<th>Notes</th>
-											<td>${featureData.notes.length > 30 ? featureData.notes.slice(0, 30).concat("...") : featureData.notes}</td>
-										</tr>
-										<tr>
-											<th>Created By</th>
-											<td>${createdBy}</td>
-										</tr>
-										<tr>
-											<th>Created At</th>
-											<td>${new Date(_feature.properties.created_at).toLocaleString()}</td>
-										</tr>
-									</table>
-								</div>
-								${actions}
-							</div>
+						// const popupContent = `
+						// 	<div class="feature-popup-content">
+						// 		<div>
+						// 			<table class="popup-content-table">
+						// 				<tr>
+						// 					<th>ID</th>
+						// 					<td>${featureData.id}</td>
+						// 				</tr>
+						// 				<tr>
+						// 					<th>Name</th>
+						// 					<td>${featureData.name}</td>
+						// 				</tr>
+						// 				<tr>
+						// 					<th>Measure</th>
+						// 					<td>${measure?.toFixed(2)} ${measureUnit}</td>
+						// 				</tr>
+						// 				<tr>
+						// 					<th>Notes</th>
+						// 					<td>${featureData.notes.length > 30 ? featureData.notes.slice(0, 30).concat("...") : featureData.notes}</td>
+						// 				</tr>
+						// 				<tr>
+						// 					<th>Created By</th>
+						// 					<td>${createdBy}</td>
+						// 				</tr>
+						// 				<tr>
+						// 					<th>Created At</th>
+						// 					<td>${new Date(_feature.properties.created_at).toLocaleString()}</td>
+						// 				</tr>
+						// 			</table>
+						// 		</div>
+						// 		${actions}
+						// 	</div>
 
-						`;
+						// `;
 						layer.bindPopup(popupContent2);
 
 						layer.on("popupopen", () => {
