@@ -131,8 +131,8 @@ export function AppSidebar({
 								>
 									<div className="flex rounded-md bg-yellow-100 border border-yellow-800 p-3">
 										<AlertTriangle className="text-yellow-800" />
-										{warnings.map((msg) => (
-											<div className="text-yellow-800 break-words text-sm leading-snug">
+										{warnings.map((msg, index) => (
+											<div key={index} className="text-yellow-800 wrap-break-word text-sm leading-snug">
 												{msg}
 											</div>
 										))}

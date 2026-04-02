@@ -1,24 +1,41 @@
-import { useMapEvents } from "react-leaflet";
-import { useRef } from "react";
+import { useMap } from "react-leaflet";
+import { useEffect, useRef } from "react";
 
 function MapEvents() {
-	const isFirstLoad = useRef(true);
+	const map = useMap();
+	const hasInitialized = useRef(false);
 
-	useMapEvents({
-		moveend: (e) => {
-			if (isFirstLoad.current) {
-				isFirstLoad.current = false;
-				return;
-			}
+	// ✅ run once when map is ready
+	useEffect(() => {
+		if (!map || hasInitialized.current) return;
 
-			const map = e.target;
+		const center = map.getCenter();
+
+		localStorage.setItem("centerX", center.lng.toString());
+		localStorage.setItem("centerY", center.lat.toString());
+		localStorage.setItem("zoom", map.getZoom().toString());
+
+		hasInitialized.current = true;
+	}, [map]);
+
+	// ✅ track movements
+	useEffect(() => {
+		if (!map) return;
+
+		const handleMoveEnd = () => {
 			const center = map.getCenter();
 
 			localStorage.setItem("centerX", center.lng.toString());
 			localStorage.setItem("centerY", center.lat.toString());
 			localStorage.setItem("zoom", map.getZoom().toString());
-		},
-	});
+		};
+
+		map.on("moveend", handleMoveEnd);
+
+		return () => {
+			map.off("moveend", handleMoveEnd);
+		};
+	}, [map]);
 
 	return null;
 }

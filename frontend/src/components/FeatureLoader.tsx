@@ -105,7 +105,7 @@ const FeatureLoader = ({
 
 						const actions =
 							createdBy === "You"
-								? `<div class="controls flex gap-1 mt-2 w-auto">
+								? `<div class="controls flex gap-1 mt-3 justify-center w-auto">
 									<button class="edit-att hover:font-bold active:border active:border-green-600 p-2 rounded-md cursor-pointer bg-green-300 hover:bg-green-100 flex justify-center items-center" title="Edit Attributes">
 										<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil-icon lucide-pencil"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>
 									</button>
@@ -117,6 +117,17 @@ const FeatureLoader = ({
 									</button>
 								</div>`
 								: ``;
+
+						const popupContent2 = `
+							<div class="text-center">
+							<h2 class="font-bold text-lg text-center">${featureData.name}</h2>
+							${measure ? `<h2 class="mb-2 font-bold text-md text-center ">${measure.toFixed(2)} ${measureUnit}</h2>` : ""}
+							<p class="italic text-gray-500">${featureData.notes}</p>
+							<span>${_feature.properties.created_by}</span><br/>
+							<span class="text-gray-500">${new Date(_feature.properties.created_at).toLocaleString()}</span>
+							${actions}
+							</div>
+						`;
 
 						const popupContent = `
 							<div class="feature-popup-content">
@@ -152,7 +163,7 @@ const FeatureLoader = ({
 							</div>
 
 						`;
-						layer.bindPopup(popupContent);
+						layer.bindPopup(popupContent2);
 
 						layer.on("popupopen", () => {
 							const popupEl = layer.getPopup()?.getElement();
@@ -202,9 +213,9 @@ const FeatureLoader = ({
 				});
 			}
 
+			setFeatures(features);
 			setLoading(false);
 		};
-		setFeatures(features);
 		loadFeatures();
 	}, [djangoItemsRef]);
 

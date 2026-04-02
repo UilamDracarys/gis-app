@@ -5,7 +5,7 @@ import {
 	FeatureGroup,
 } from "react-leaflet";
 import ActionBar from "./ActionBar";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import FeatureDialog from "./FeatureDialog";
 import FeatureLoader from "./FeatureLoader";
 import L from "leaflet";
@@ -13,18 +13,24 @@ import "leaflet-draw";
 import { toast } from "react-toastify";
 import featuresApi from "@/services/api/features";
 import { Check, Ban, X } from "lucide-react";
-const { BaseLayer } = LayersControl;
 import ResizeMap from "./ResizeMap";
 import { useSidebar } from "./ui/sidebar";
 import MapEvents from "./MapEvents";
 import { Input } from "./ui/input";
 import MapController from "./MapController";
+import { useLocation, useNavigate } from "react-router-dom";
+const { BaseLayer } = LayersControl;
 
 const Map = () => {
+	const location = useLocation();
+	const navigate = useNavigate();
+	const zoomToId = location.state?.id;
+
 	const center: [number, number] = [
 		Number(localStorage.getItem("centerY")) ?? 10.493574598800125,
 		Number(localStorage.getItem("centerX")) ?? 123.41472829999998,
 	];
+
 	const zoom: number = Number(localStorage.getItem("zoom")) ?? 13;
 	const drawnItemsRef = useRef<L.FeatureGroup | null>(null);
 	const djangoItemsRef = useRef<L.FeatureGroup | null>(null);
@@ -51,7 +57,6 @@ const Map = () => {
 	const [editingFeature, setEditingFeature] = useState<any>(null);
 
 	const openDialog = (featureData?: any) => {
-		console.log(featureData);
 		setEditingFeature(featureData || null);
 		setOpen(true);
 	};
@@ -62,7 +67,6 @@ const Map = () => {
 	};
 
 	const handleSave = async (data: any) => {
-		console.log("TOSAVE", Object.fromEntries(data));
 		setLoading(true);
 
 		if (data.get("id") !== null && data.get("id") !== "") {
@@ -70,13 +74,11 @@ const Map = () => {
 
 			const layer = editingLayerRef.current;
 			layer.setStyle(JSON.parse(data.get("style")));
-			
+
 			const res = await featuresApi.updateAttributes(
 				data.get("id"),
 				data,
 			);
-
-			console.log("UPDATED", res?.data);
 		} else {
 			const geojson = drawnItemsRef.current?.toGeoJSON();
 
@@ -101,8 +103,6 @@ const Map = () => {
 
 			localStorage.setItem("savedStyles", data.get("style"));
 			const res = await featuresApi.saveFeature(data);
-
-			console.log("SAVED", res);
 		}
 
 		setLoading(false);
@@ -114,12 +114,7 @@ const Map = () => {
 		if (!editingLayerRef.current) return;
 		const layer = editingLayerRef.current as any;
 
-		console.log("LAYER", layer);
-
 		const original = layer._originalGeoJSON;
-		console.log("original", original);
-
-		console.log(original.geometry.coordinates);
 
 		const restored = L.geoJSON(original).getLayers()[0] as any;
 		layer.editing?.disable();
@@ -148,8 +143,6 @@ const Map = () => {
 		const geojson = edited.toGeoJSON();
 		const id = edited.feature.id;
 
-		console.log(geojson.geometry);
-
 		const res = await featuresApi.updateGeometry(id, geojson.geometry);
 
 		if (!res?.success) toast.error("Error", res?.error as any);
@@ -169,20 +162,18 @@ const Map = () => {
 		if (keyword.length > 0) {
 			setSearchKeyword(keyword);
 			results = features.filter((feature: any) =>
-				feature.searchString.toLowerCase().includes(keyword.toLowerCase()),
+				feature.searchString
+					.toLowerCase()
+					.includes(keyword.toLowerCase()),
 			);
 		} else {
 			setSearchKeyword("");
 		}
-
-		console.log(features);
-		console.log(results);
 		setSearchResults(results);
 	};
 
 	const handleSearchClick = (id: number) => {
 		let foundLayer: any = null;
-		console.log(typeof id);
 
 		djangoItemsRef.current?.eachLayer((layer: any) => {
 			if (layer.feature?.id === id) {
@@ -192,11 +183,23 @@ const Map = () => {
 				} else {
 					map?.setView(foundLayer.getLatLng(), 16);
 				}
+				layer.openPopup();
 			}
 		});
 
 		setShowResults(false);
 	};
+
+	useEffect(() => {
+		if (
+			zoomToId !== null &&
+			zoomToId !== undefined &&
+			features.length > 0
+		) {
+			handleSearchClick(zoomToId);
+			navigate(location.pathname, { replace: true, state: null });	
+		}
+	}, [zoomToId, features]);
 
 	return (
 		<div className="w-full h-screen relative">

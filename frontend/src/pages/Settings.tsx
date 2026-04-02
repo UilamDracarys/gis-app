@@ -2,9 +2,13 @@ import { Cog } from 'lucide-react'
 
 const Settings = () => {
   return (
-    <div className='h-screen w-full flex flex-col justify-center items-center gap-3 text-gray-600'>
-      <Cog />
-      Settings
+    <div className="h-screen w-full py-5 px-4">
+			<h1 className="text-2xl font-bold  mt-5 flex gap-2 items-center">
+				<Cog />
+				Settings
+			</h1>
+			<div className="border rounded-lg p-4 mt-3 overflow-auto">
+    </div>
     </div>
   )
 }

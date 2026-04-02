@@ -1,6 +1,6 @@
 import featuresApi from "@/services/api/features";
 import { useEffect, useState } from "react";
-import { Loader, Sheet } from "lucide-react";
+import { Hexagon, Loader, MapPin, Sheet, Waypoints } from "lucide-react";
 import {
 	Table,
 	TableBody,
@@ -9,6 +9,7 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
+import { Link } from "react-router-dom";
 
 const Features = () => {
 	const [features, setFeatures] = useState([]);
@@ -25,91 +26,110 @@ const Features = () => {
 	}, []);
 
 	return (
-		<div className="h-screen w-full py-5 px-4">
-			<h1 className="text-2xl font-bold  mt-5 flex gap-2 items-center">
-				<Sheet />
-				Features</h1>
-			<div className="border rounded-lg p-4 mt-3 overflow-auto">
-				<Table>
-					<TableHeader>
-						<TableRow>
-							<TableHead>ID</TableHead>
-							<TableHead>Type</TableHead>
-							<TableHead>Name</TableHead>
-							<TableHead>Measure</TableHead>
-							<TableHead>Unit</TableHead>
-							<TableHead>Notes</TableHead>
-						</TableRow>
-					</TableHeader>
-					<TableBody>
-						{loading && (
+		<>
+			<div className="h-screen w-full py-5 px-4">
+				<h1 className="text-2xl font-bold  mt-5 flex gap-2 items-center">
+					<Sheet />
+					Features
+				</h1>
+				<div className="border rounded-lg p-4 mt-3 overflow-auto">
+					<Table>
+						<TableHeader>
 							<TableRow>
-								<TableCell
-									colSpan={6}
-									className="p-3 bg-gray-100"
-								>
-									<div className="flex items-center justify-center">
-										<Loader className="animate-spin" />
-									</div>
-								</TableCell>
+								<TableHead>ID</TableHead>
+								<TableHead>Name</TableHead>
+								<TableHead>Measure</TableHead>
+								<TableHead>Unit</TableHead>
+								<TableHead>Notes</TableHead>
 							</TableRow>
-						)}
-
-						{features.map((feature: any, index) => {
-							const measureType =
-								feature.properties.measure?.type;
-
-							const measure =
-								measureType == "length"
-									? feature.properties.measure?.value > 1000
-										? feature.properties.measure?.value /
-											1000
-										: feature.properties.measure?.value
-									: feature.properties.measure?.value > 10000
-										? feature.properties.measure?.value /
-											10000
-										: feature.properties.measure?.value;
-
-							const measureUnit =
-								measureType == "length"
-									? feature.properties.measure?.value > 1000
-										? "Km"
-										: "m"
-									: feature.properties.measure?.value > 10000
-										? "ha"
-										: feature.properties.measure?.value ===
-											  undefined
-											? ""
-											: "sqm";
-
-							return (
-								<TableRow
-									key={index}
-									className="odd:bg-gray-100"
-								>
-									<TableCell>{feature.id}</TableCell>
-									<TableCell className="p-3">
-										{feature.geometry.type}
-									</TableCell>
-									<TableCell className="p-3 font-bold">
-										{feature.properties.name}
-									</TableCell>
-									<TableCell className="p-3 text-right">
-										{measure?.toFixed(2)}
-									</TableCell>
-									<TableCell className="p-3">
-										{measureUnit}
-									</TableCell>
-									<TableCell className="p-3">
-										{feature.properties.notes}
+						</TableHeader>
+						<TableBody>
+							{loading && (
+								<TableRow>
+									<TableCell
+										colSpan={6}
+										className="p-3 bg-gray-100"
+									>
+										<div className="flex items-center justify-center">
+											<Loader className="animate-spin" />
+										</div>
 									</TableCell>
 								</TableRow>
-							);
-						})}
-					</TableBody>
-				</Table>
+							)}
+
+							{features.map((feature: any, index) => {
+								const measureType =
+									feature.properties.measure?.type;
+
+								const measure =
+									measureType == "length"
+										? feature.properties.measure?.value >
+											1000
+											? feature.properties.measure
+													?.value / 1000
+											: feature.properties.measure?.value
+										: feature.properties.measure?.value >
+											  10000
+											? feature.properties.measure
+													?.value / 10000
+											: feature.properties.measure?.value;
+
+								const measureUnit =
+									measureType == "length"
+										? feature.properties.measure?.value >
+											1000
+											? "Km"
+											: "m"
+										: feature.properties.measure?.value >
+											  10000
+											? "ha"
+											: feature.properties.measure
+														?.value === undefined
+												? ""
+												: "sqm";
+
+								const geomType =
+									feature.geometry.type === "LineString" ? (
+										<Waypoints />
+									) : feature.geometry.type === "Polygon" ? (
+										<Hexagon />
+									) : (
+										<MapPin />
+									);
+
+								return (
+									<TableRow
+										key={index}
+										className="odd:bg-gray-100"
+									>
+										<TableCell>{feature.id}</TableCell>
+										<TableCell className="p-3 font-bold">
+											<Link
+												to="/"
+												state={{ id: feature.id }}
+												className="flex gap-2 hover:scale-102 transition-all duration-300 ease"
+											>
+												{geomType}
+												{feature.properties.name}
+											</Link>
+										</TableCell>
+										<TableCell className="p-3 text-right">
+											{measure?.toFixed(2)}
+										</TableCell>
+										<TableCell className="p-3">
+											{measureUnit}
+										</TableCell>
+										<TableCell className="p-3">
+											{feature.properties.notes}
+										</TableCell>
+									</TableRow>
+								);
+							})}
+						</TableBody>
+					</Table>
+				</div>
 			</div>
-		</div>
+		</>
 	);
 };
 
