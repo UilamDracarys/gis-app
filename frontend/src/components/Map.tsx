@@ -75,7 +75,7 @@ const Map = () => {
 			const layer = editingLayerRef.current;
 			layer.setStyle(JSON.parse(data.get("style")));
 
-			const res = await featuresApi.updateAttributes(
+			await featuresApi.updateAttributes(
 				data.get("id"),
 				data,
 			);
@@ -102,7 +102,7 @@ const Map = () => {
 			);
 
 			localStorage.setItem("savedStyles", data.get("style"));
-			const res = await featuresApi.saveFeature(data);
+			await featuresApi.saveFeature(data);
 		}
 
 		setLoading(false);
